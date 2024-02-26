@@ -8,6 +8,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useHeaderHeight, HeaderBackButton } from '@react-navigation/elements'
 import * as ImagePicker from "expo-image-picker";
+import { openBrowserAsync } from 'expo-web-browser';
+import * as Notifications from 'expo-notifications'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -20,6 +22,14 @@ const SearchStack = createNativeStackNavigator();
 const deviceWidth = Dimensions.get('window').width;
 const icons = {"Home": "home", "Post": "add", "Notifications": "notifications", "ChatStack": "chatbubble", "UserStack": "person", "Settings": "settings-sharp", "SearchStack": "search"};
 
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
+	}),
+});
+
 export default function App() {
 	const [username, setUsername] = React.useState("");
 	const [password, setPassword] = React.useState("");
@@ -30,6 +40,10 @@ export default function App() {
 			await get("username").then(username => setUsername(username));
 			await get("password").then(password => setPassword(password));
 		};
+		
+		Notifications.requestPermissionsAsync();
+		
+		//Notifications.getExpoPushTokenAsync({ projectId: '2bb968e4-c704-40c2-8248-68a3862b431a' }).then(result => console.log(result.data));
 		
 		firstLoad();
     }, []);
@@ -201,7 +215,7 @@ export default function App() {
 		
 		return (
 		<View style={styles.searchContainer}>
-			<TextInput style={styles.searchInput} onChangeText={setQuery} value={query} />
+			<TextInput style={styles.searchInput} onChangeText={setQuery} value={query} keyboardAppearance="dark" />
 			<TouchableOpacity style={styles.searchButton} onPress={() => navigation.navigate("Results", {query: query})}>
 				<Ionicons color="white" size={32} name="search" />
 			</TouchableOpacity>
@@ -254,7 +268,7 @@ export default function App() {
 				data.append("picture[]", {
 					name: img.fileName,
 					type: img.type,
-					uri: img.uri.replace('file://', ''),});
+					uri: img.uri});
 			});
 			
 			const requestOptions = {
@@ -262,12 +276,12 @@ export default function App() {
 				body: data
 			};
 			
-			fetch('https://jahanrashidi.com/sm/api/post.php', requestOptions).then(response => response.json).then(data => console.log(data));;
+			fetch('https://jahanrashidi.com/sm/api/post.php', requestOptions);
 			
 			setDescription("");
 			setImage("");
 			
-			navigation.navigate("UserStack", {screen: "User", params: {user: username, refresh: true}});
+			navigation.navigate("UserStack", {screen: "Profile", params: {refresh: true}});
 		}
 		
 		async function pickImage() { 
@@ -276,15 +290,27 @@ export default function App() {
 			if (status === "granted") {
 				const result = await ImagePicker.launchImageLibraryAsync({allowsMultipleSelection: true}); 
 
-				if (!result.cancelled) { 
+				if (!result.cancelled) {
+					for(let i = 0; i < result.assets.length; i++){
+						result.assets[i].uri = result.assets[i].uri.replace("file://", "");
+					}
+					
 					setImage(result.assets); 
 				} 
 			} 
 		}
 		
+		function DisplayImages({images}){
+			if(images[0] == undefined) return (<></>);
+			
+			return images.map(img => 
+				(<RemoteImage key={img.uri} uri={img.uri} desiredWidth={deviceWidth - 20} style={{margin: 10, borderRadius: 5}} />));
+		}
+		
 		return (
 		<ScrollView style={{marginTop: 40}}>
 			<TextInput placeholder="Description" value={description} multiline = {true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
+			<DisplayImages images={image} />
 			<AuthButton onPress={pickImage}>Select images</AuthButton>
 			<AuthButton onPress={post}>Post</AuthButton>
 		</ScrollView>);
@@ -292,21 +318,53 @@ export default function App() {
 
 	function NotificationsScreen({navigation}){
 		const [notifications, setNotifications] = React.useState([]);
-		React.useEffect(() => {			
+		const [refreshing, setRefreshing] = React.useState(false);
+		
+		const onRefresh = React.useCallback(() => {
+			setRefreshing(true);
+			refresh().then(() => setRefreshing(false));
+		}, []);
+		
+		async function refresh(){
 			const requestOptions = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: "username=" + username + "&password=" + password
 			};
 			
-			fetch('https://jahanrashidi.com/sm/api/notifications.php', requestOptions)
-				.then(response => response.json())
-				.then(data => setNotifications(data.old));
+			fetch("https://jahanrashidi.com/sm/api/read_notifications.php", requestOptions).then(() => {
+				fetch('https://jahanrashidi.com/sm/api/notifications.php', requestOptions)
+					.then(response => response.json())
+					.then(data => setNotifications(data.old));
+			});
+		}
+		
+		function parseNotification(notification){
+			console.log(notification.type);
+			switch(notification.type){
+				case "new_follower":
+					return (<View style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> followed you.</Text></View>);
+				
+				case "commented_on_post":
+					return (
+					<View style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> commented on</Text>
+						<TouchableOpacity onPress={() => navigation.navigate("Comments", {post_id: notification.id})}>
+							<Text style={styles.link}> your post.</Text>
+						</TouchableOpacity>
+					</View>
+					);
+			}
+			
+			return (<Text>Unknown notification type</Text>);
+		}
+		
+		React.useEffect(() => {			
+			refresh();
 		}, []);
 
 		return (
-		<ScrollView>
-		{notifications.map(notification => (<Button title={notification} />))}
+		<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" style={{paddingTop: 25}} />}>
+		{notifications.map(notification => parseNotification(notification))}
 		</ScrollView>
 		);
 	}
@@ -483,50 +541,9 @@ export default function App() {
 			refresh();
 		}, [route.params]);
 		
-		async function follow(){
-			fetch('https://jahanrashidi.com/sm/api/follow.php', requestOptions);
-			
-			await refresh();
-		}
-		
-		async function unfollow(){
-			fetch('https://jahanrashidi.com/sm/api/unfollow.php', requestOptions);
-			
-			await refresh();
-		}
-		
-		function followButton(){
-			if(user === username) return (<></>);
-
-			if(userData?.friends?.followers.includes(username)){
-				return (
-				<TouchableOpacity onPress={unfollow}>
-					<Ionicons name="person-remove" color="white" size={32} />
-				</TouchableOpacity>
-				);
-			} else{
-				return (
-				<TouchableOpacity onPress={follow}>
-					<Ionicons name="person-add" color="white" size={32} />
-				</TouchableOpacity>
-				);
-			}
-		}
-		
 		return (
 		<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
-			<View style={styles.profile}>
-				<Image source={{uri: userData.pfp}} style={styles.pfp} />
-				<View style={{marginVertical: 16, flexDirection: "row"}}>
-					<Text style={{fontSize: 32, /*marginLeft: 34,*/ marginRight: 4}}>{userData.display_name}</Text>
-					{followButton()}
-				</View>
-				<View style={{marginBottom: 10, flexDirection: "row"}}>
-					<Button style={styles.link} color="#D47386" title={userData?.friends?.followers.length + " followers"} onPress={() => navigation.navigate("Followers", {followers: userData?.friends?.followers, referrerTitle: userData.display_name})} />
-					<Button style={styles.link} color="#D47386" title={userData?.friends?.following.length + " following"} onPress={() => navigation.navigate("Following", {following: userData?.friends?.following, referrerTitle: userData.display_name})} />
-				</View>
-				<Text>{userData.bio?.text}</Text>
-			</View>
+			<Profile navigation={navigation} userData={userData} />
 			
 			<Seperator />
 			
@@ -577,59 +594,132 @@ export default function App() {
 		
 		return (
 		<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
-			<View style={styles.profile}>
-				<Image source={{uri: userData.pfp}} style={styles.pfp} />
-				<View style={{marginVertical: 16, flexDirection: "row"}}>
-					<Text style={{fontSize: 32, marginRight: 4}}>{userData.display_name}</Text>
-				</View>
-				<View style={{marginBottom: 10, flexDirection: "row"}}>
-					<Button style={styles.link} color="#D47386" title={userData?.friends?.followers.length + " followers"} onPress={() => navigation.navigate("Followers", {followers: userData?.friends?.followers, referrerTitle: userData.display_name})} />
-					<Button style={styles.link} color="#D47386" title={userData?.friends?.following.length + " following"} onPress={() => navigation.navigate("Following", {following: userData?.friends?.following, referrerTitle: userData.display_name})} />
-				</View>
-				<View style={{marginBottom: 10, flexDirection: "row"}}>
-					<Button style={styles.link} color="#D47386" title="Edit profile" onPress={() => navigation.navigate("Edit profile")} />
-					<Button style={styles.link} color="#D47386" title="Log-out" onPress={() => Alert.alert("Log-out", "Are you sure you want to log-out?",
-								[{text: "Log-out", onPress: () => { logout(); }}, {text: "Cancel"}]
-							)} />
-				</View>
-				<Text>{userData.bio?.text}</Text>
-			</View>
+			<Profile userData={userData} navigation={navigation} />
 			
 			<Seperator />
 			
 			<View>
-				<Posts posts={posts} navigation={navigation} />
+				<Posts posts={posts} navigation={navigation} user={true} />
 			</View>
 		</ScrollView>
 		);
 	}
 	
 	function FollowersScreen({route, navigation}){
-		const followers = route.params?.followers;
+		const [followers, setFollowers] = React.useState([]);
 		
-		if(route.params?.referrerTitle) navigation.setOptions({headerBackTitle: route.params.referrerTitle}); 
+		async function refresh(){
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: "username=" + username + "&password=" + password + "&user=" + route.params?.user
+			};
+			
+			fetch('https://jahanrashidi.com/sm/api/followers.php', requestOptions)
+				.then(response => response.json())
+				.then(data => setFollowers(data));
+		}
+		
+		React.useEffect(() => {	
+			if(route.params?.referrerTitle) navigation.setOptions({headerBackTitle: route.params.referrerTitle}); 
+			
+			refresh();
+		}, [route.params]);
 		
 		return (
 		<ScrollView>
-			{followers.map(follower => (<Username key={follower} navigation={navigation}>{follower}</Username>))}
+			<ListUsers users={followers} navigation={navigation} />
 		</ScrollView>
 		);
 	}
 	
 	function FollowingScreen({route, navigation}){
-		const following = route.params?.following;
+		const [following, setFollowing] = React.useState([]);
 		
-		if(route.params?.referrerTitle) navigation.setOptions({headerBackTitle: route.params.referrerTitle}); 
+		async function refresh(){
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: "username=" + username + "&password=" + password + "&user=" + route.params?.user
+			};
+			
+			fetch('https://jahanrashidi.com/sm/api/following.php', requestOptions)
+				.then(response => response.json())
+				.then(data => setFollowing(data));
+		}
+		
+		React.useEffect(() => {	
+			if(route.params?.referrerTitle) navigation.setOptions({headerBackTitle: route.params.referrerTitle}); 
+			
+			refresh();
+		}, [route.params]);
 		
 		return (
 		<ScrollView>
-			{following.map(following => (<Username key={following} navigation={navigation}>{following}</Username>))}
+			<ListUsers users={following} navigation={navigation} />
 		</ScrollView>
 		);
 	}
 
-	function EditingScreen({navigation}){
-		return (<Text>editing</Text>);
+	function EditingScreen({route, navigation}){
+		const [displayName, setDisplayName] = React.useState(route.params.userData?.display_name);
+		const [website, setWebsite] = React.useState(route.params.userData?.bio.link);
+		const [bio, setBio] = React.useState(route.params.userData?.bio.text);
+		const [pfp, setPFP] = React.useState([]);
+		
+		async function pickPFP(){
+			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync(); 
+
+			if (status === "granted") {
+				const result = await ImagePicker.launchImageLibraryAsync(); 
+
+				if (!result.cancelled) { 
+					const pfp = result.assets[0];
+					pfp.uri = pfp.uri.replace("file://", "");
+					
+					setPFP(pfp);
+				} 
+			} 
+		}
+		
+		async function saveChanges(){
+			const data = new FormData();
+			data.append("username", username);
+			data.append("password", password);
+			data.append("bio", bio);
+			data.append("website", website);
+			data.append("display_name", displayName);
+			
+			// crashes if append entire object
+			if(pfp?.uri) data.append("pfp", {name: pfp.fileName, type: pfp.type, uri: pfp.uri});
+			
+			const requestOptions = {
+				method: 'POST',
+				body: data
+			};
+			
+			fetch('https://jahanrashidi.com/sm/api/edit_profile.php', requestOptions).then(response => response.json).then(data => console.log(data));;
+			
+			navigation.navigate("UserStack", {screen: "Profile", params: {refresh: true}});
+		}
+		
+		return (
+		<ScrollView>
+			<Text style={styles.inputLabel}>Display name</Text>
+			<TextInput style={styles.authInput} value={displayName} onChangeText={setDisplayName} keyboardAppearance="dark" />
+			
+			<Text style={styles.inputLabel}>Website</Text>
+			<TextInput style={styles.authInput} value={website} onChangeText={setWebsite} keyboardAppearance="dark" />
+			
+			<Text style={styles.inputLabel}>Bio</Text>
+			<TextInput style={[styles.authInput, {height: 100}]} multiline={true} onChangeText={setBio} value={bio} keyboardAppearance="dark" />
+			
+			<View style={{alignItems: "center", marginTop: 30}}><Image style={styles.pfp} source={{uri: pfp?.uri ? pfp.uri : route.params.userData?.pfp}} /></View>
+			<AuthButton onPress={()=> {pickPFP()}}>Choose profile picture</AuthButton>
+			
+			<AuthButton onPress={()=> {saveChanges()}}>Save changes</AuthButton>
+		</ScrollView>
+		);
 	}
 
 	function SettingsScreen({navigation}){
@@ -803,7 +893,7 @@ export default function App() {
 		fetch('https://jahanrashidi.com/sm/api/delete_post.php', requestOptions);
 	}
 
-	function Posts({posts, navigation}){
+	function Posts({posts, navigation, user}){
 		if(posts.map == undefined) return (<></>);
 		
 		return posts.map(post => (
@@ -815,7 +905,7 @@ export default function App() {
 				<View style={styles.post.bottom}>
 					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
 						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity onPress={() => navigation.navigate("Comments", {post_id: post.id})} style={{marginRight: 10}}>
+							<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})} style={{marginRight: 10}}>
 								<Ionicons name="chatbox-ellipses" color="white" size={24} />
 							</TouchableOpacity>
 							<TouchableOpacity onPress={() => sendPost(post.id)}>
@@ -836,6 +926,68 @@ export default function App() {
 				</View>
 			</View>
 		))
+	}
+
+	function Profile({navigation, userData}){
+		function followButton(){
+			if(userData?.username === username) return (<></>);
+
+			if(userData?.friends?.followers.includes(username)){
+				return (
+				<TouchableOpacity onPress={unfollow}>
+					<Ionicons name="person-remove" color="white" size={32} />
+				</TouchableOpacity>
+				);
+			} else{
+				return (
+				<TouchableOpacity onPress={follow}>
+					<Ionicons name="person-add" color="white" size={32} />
+				</TouchableOpacity>
+				);
+			}
+		}
+		
+		async function follow(){
+			fetch('https://jahanrashidi.com/sm/api/follow.php', requestOptions);
+			
+			await refresh();
+		}
+		
+		async function unfollow(){
+			fetch('https://jahanrashidi.com/sm/api/unfollow.php', requestOptions);
+			
+			await refresh();
+		}
+		
+		if(userData.pfp == undefined) return (<></>);
+		
+		return (
+		<View style={styles.profile}>
+			<Image source={{uri: userData.pfp}} style={styles.pfp} />
+			<View style={{marginVertical: 16, flexDirection: "row"}}>
+				<Text style={{fontSize: 32, marginRight: 4}}>{userData.display_name}</Text>
+				{followButton()}
+			</View>
+			<View style={{marginBottom: 10, flexDirection: "row"}}>
+				<Button style={styles.link} color="#D47386" title={userData?.friends?.followers.length + " followers"} 
+					onPress={() => navigation.navigate("Followers", {user: userData.username, referrerTitle: userData.display_name})} />
+				<Button style={styles.link} color="#D47386" title={userData?.friends?.following.length + " following"} 
+					onPress={() => navigation.navigate("Following", {user: userData.username, referrerTitle: userData.display_name})} />
+			</View>
+			{userData.bio?.link == "" ? (<></>) : (<Button style={styles.link} color="#D47386" title={userData.bio?.link} onPress={() => openBrowserAsync(userData.bio?.link)} />)}
+			
+			<Text>{userData.bio?.text}</Text>
+			
+			{userData.username == username ? (
+				<View style={{marginVertical: 10, flexDirection: "row"}}>
+					<Button style={styles.link} color="#D47386" title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
+					<Button style={styles.link} color="#D47386" title="Log-out" onPress={() => Alert.alert("Log-out", "Are you sure you want to log-out?",
+								[{text: "Log-out", onPress: () => { logout(); }}, {text: "Cancel"}]
+							)} />
+				</View>) : (<></>)
+			}
+		</View>
+		);
 	}
 }
 
@@ -892,7 +1044,6 @@ const styles = StyleSheet.create({
 	profile: {
 		marginTop: 25,
 		alignItems: "center",
-		borderBottom: 1,
 		marginHorizontal: 10
 	},
 	text: {
@@ -965,6 +1116,17 @@ const styles = StyleSheet.create({
 	},
 	searchButton:{
 		margin: 9
+	},
+	inputLabel: {
+		marginHorizontal: 40,
+		marginTop: 15,
+		marginBottom: -10
+	},
+	notification: {
+		flexDirection: "row",
+		paddingVertical: 4, 
+		marginVertical: 4, 
+		backgroundColor: "#262626"
 	}
 });
 
@@ -998,7 +1160,7 @@ function AuthButton(props){
 
 function ListUsers(props){
 	if(props.users.map == undefined) return (<Text>Missing users prop</Text>);
-	console.log(props.users);
+	
 	return props.users.map(user => (
 		<TouchableOpacity style={{flexDirection: "row", paddingVertical: 4, marginVertical: 4, backgroundColor: "#262626"}} 
 		key={user.username} onPress={() => props.navigation.navigate("UserStack", {screen: "User", initial: false, params: {user: user.username}})}>
