@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "social-media",
+    "name": "Jwitter",
     "slug": "social-media",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,23 +9,24 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#282828"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.imnotjahan.socialmedia",
-	  "config": {
+      "config": {
         "googleMobileAdsAppId": "ca-app-pub-5663733977589649~5891451857"
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#282828"
+      },
+      "package": "com.imnotjahan.socialmedia"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,9 +37,7 @@
       }
     },
     "owner": "imnotjahan",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/2bb968e4-c704-40c2-8248-68a3862b431a"
     }
