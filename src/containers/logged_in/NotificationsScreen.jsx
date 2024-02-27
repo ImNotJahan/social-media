@@ -32,14 +32,18 @@ export default function NotificationsScreen({route, navigation}){
 		});
 	}
 	
+	let key = 0;
+
 	function parseNotification(notification){
+		key++;
+
 		switch(notification.type){
 			case "new_follower":
-				return (<View style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> followed you.</Text></View>);
+				return (<View key={key} style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> followed you.</Text></View>);
 			
 			case "commented_on_post":
 				return (
-				<View style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> commented on</Text>
+				<View key={key} style={styles.notification}><Username navigation={navigation}>{notification.user}</Username><Text> commented on</Text>
 					<TouchableOpacity onPress={() => navigation.navigate("Comments", {post_id: notification.id})}>
 						<Text style={styles.link}> your post.</Text>
 					</TouchableOpacity>
@@ -47,7 +51,7 @@ export default function NotificationsScreen({route, navigation}){
 				);
 		}
 		
-		return (<Text>Unknown notification type</Text>);
+		return (<Text key={key}>Unknown notification type</Text>);
 	}
 	
 	useEffect(() => {			

@@ -1,20 +1,26 @@
 import { StyleSheet } from "react-native";
 
+export const colors = {
+	background: "#2a2b2a", //"#464e47s", // 282828 606c38
+	text: "#ddd",
+	link: "#0a8754", // D47386
+	foreground: "#3a3b3a", // 262626
+	input: "#141414"
+};
+
 export const styles = StyleSheet.create({
 	pfp: {
 		width: 120,
 		height: 120,
 		borderRadius: 60,
 	},
-	home: {
-		flex: 1,
-		marginTop: 20
-	},
 	post: {
 		main: {
 			marginBottom: 20,
 			padding: 10,
-			backgroundColor: "#262626"
+			backgroundColor: colors.foreground,
+			borderRadius: 5,
+			margin: 5
 		},
 		bottom: {
 		}
@@ -31,26 +37,27 @@ export const styles = StyleSheet.create({
 		fontWeight: 500
 	},
 	link: {
-		color: "#D47386",
+		color: colors.link,
 		fontWeight: 600,
 		fontFamily: "Montserrat_700Bold"
 	},
 	tabBar: {
-		color: "#282828"
+		color: colors.background
 	},
 	stackNav: { 
-		contentStyle: {backgroundColor: '#282828'}, 
+		contentStyle: {backgroundColor: colors.background}, 
 		headerStyle: {
-			backgroundColor: '#282828',
+			backgroundColor: colors.background,
 		},
-		headerTintColor: '#eee',
+		headerTintColor: colors.text,
 	},
 	messageInput: {
-		color: "#ddd",
+		color: colors.text,
 		fontSize: 16,
 		flex: 1,
 		padding: 10,
-		height: 40
+		height: 40,
+		fontFamily: "Montserrat_500Medium"
 	},
 	sendButton: {
 		marginLeft: 10
@@ -63,7 +70,7 @@ export const styles = StyleSheet.create({
 		color: "#ddd",
 		borderRadius: 8,
 		height: 50,
-		backgroundColor: "#141414",
+		backgroundColor: colors.input,
 		fontSize: 16,
 		paddingHorizontal: 16,
 		marginHorizontal: 32,
@@ -81,7 +88,7 @@ export const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	searchInput: {
-		color: "#ddd",
+		color: colors.text,
 		height: 50,
 		fontSize: 16,
 		paddingHorizontal: 16,
@@ -90,7 +97,7 @@ export const styles = StyleSheet.create({
 	searchContainer: {
 		borderRadius: 8,
 		height: 50,
-		backgroundColor: "#141414",
+		backgroundColor: colors.input,
 		marginHorizontal: 32,
 		marginVertical: 30,
 		flexDirection: "row"
@@ -107,6 +114,17 @@ export const styles = StyleSheet.create({
 		flexDirection: "row",
 		paddingVertical: 4, 
 		marginVertical: 4, 
-		backgroundColor: "#262626"
+		backgroundColor: colors.foreground
+	},
+	settings: {
+		position: "absolute",
+		right: 0,
+		margin: 20,
+		zIndex: 1 // required so TouchableOpacity can be interacted with when position: "absolute"
+	},
+	headerIcons: {
+		flexDirection: "row-reverse",
+		gap: 10,
+		marginHorizontal: 10
 	}
 });

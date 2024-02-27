@@ -2,6 +2,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from "react";
+import { Image } from "react-native";
+import { useSelector } from "react-redux";
 
 // logged out
 
@@ -32,7 +35,7 @@ import HomeScreen from "./logged_in/home/HomeScreen";
 import CommentsScreen from "./logged_in/home/CommentsScreen";
 
 
-import { styles } from "../styles";
+import { styles, colors } from "../styles";
 
 
 const Tabs = createBottomTabNavigator();
@@ -56,29 +59,36 @@ export function SplashStackScreen(){
 	);
 }
 
-const tabIcons = {"Home": "home", "Post": "add", "Notifications": "notifications", "ChatStack": "chatbubble", "UserStack": "person", 
-	"Settings": "settings-sharp", "SearchStack": "search"};
+const tabIcons = {"Home": "home-sharp", "ChatStack": "chatbubble", "UserStack": "person", "SearchStack": "search"};
 export function TabScreen(){
+	const [uri, setURI] = useState("https://jahanrashidi.com/sm/images/profile.png");
+	const username = useSelector(state => state.auth.username);
+
+	useEffect(() => {
+		fetch("https://jahanrashidi.com/sm/api/get_pfp.php?user=" + username)
+			.then(result => result.json())
+			.then(data => setURI(data.uri));
+	}, []);
+
 	return (
 	<NavigationContainer>
 		<Tabs.Navigator screenOptions={({ route }) => ({
 			tabBarIcon: ({ color, size }) => {
-				return <Ionicons name={tabIcons[route.name]} size={size} color={color} />;
+				return <Ionicons name={tabIcons[route.name]} size={32} color={color} />;
 			},
-			tabBarActiveTintColor: '#D47386',
-			tabBarInactiveTintColor: '#ddd',
+			tabBarActiveTintColor: colors.link,
+			tabBarInactiveTintColor: colors.text,
 			headerShown: false,
 			tabBarShowLabel: false,
-			tabBarActiveBackgroundColor: "#282828",
-			tabBarInactiveBackgroundColor: "#282828"
-		})} sceneContainerStyle={{backgroundColor: '#282828'}}>
+			tabBarActiveBackgroundColor: colors.background,
+			tabBarInactiveBackgroundColor: colors.background
+		})} sceneContainerStyle={{backgroundColor: colors.background}}>
 			<Tabs.Screen name="Home" component={HomeStackScreen} />
-			<Tabs.Screen name="Post" component={PostScreen} />
-			<Tabs.Screen name="Notifications" component={NotificationsScreen} />
 			<Tabs.Screen name="SearchStack" component={SearchStackScreen} />
 			<Tabs.Screen name="ChatStack" component={ChatStackScreen} />
-			<Tabs.Screen name="UserStack" component={UserStackScreen} />
-			<Tabs.Screen name="Settings" component={SettingsScreen} />
+			<Tabs.Screen name="UserStack" component={UserStackScreen} options={{tabBarIcon: ({focused}) => {
+				return (<Image source={{uri: uri}} style={{width: 32, height: 32, borderRadius: 16, borderWidth: focused ? 2 : 0, borderColor: colors.link}} />)
+			}}} />
 		  </Tabs.Navigator>
 	</NavigationContainer>
 	);
@@ -89,6 +99,8 @@ export function HomeStackScreen(){
 	<HomeStack.Navigator screenOptions={styles.stackNav}>
 		<HomeStack.Screen name="Feed" component={HomeScreen} options={{headerShown: false}} />
 		<HomeStack.Screen name="Comments" component={CommentsScreen} />
+		<HomeStack.Screen name="Post" component={PostScreen} />
+		<HomeStack.Screen name="Notifications" component={NotificationsScreen} />
 	</HomeStack.Navigator>
 	);
 }
@@ -102,6 +114,7 @@ export function UserStackScreen(){
 		<UserStack.Screen name="Followers" component={FollowersScreen} />
 		<UserStack.Screen name="Following" component={FollowingScreen} />
 		<UserStack.Screen name="Edit profile" component={EditingScreen} />
+		<UserStack.Screen name="Settings" component={SettingsScreen} />
 	</UserStack.Navigator>
 	);
 }

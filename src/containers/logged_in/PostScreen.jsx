@@ -68,7 +68,7 @@ export default function PostScreen({route, navigation}){
 	}
 	
 	return (
-	<ScrollView style={{marginTop: 40}}>
+	<ScrollView>
 		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<DisplayImages images={image} />
 		<AuthButton onPress={pickImage}>Select images</AuthButton>

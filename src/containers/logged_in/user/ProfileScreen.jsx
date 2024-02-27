@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, View, RefreshControl } from "react-native";
+import { ScrollView, View, RefreshControl, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 import Profile from "../../../components/Profile";
 import Seperator from "../../../components/Seperator";
 import Posts from "../../../components/Posts";
-import styles from "../../../styles";
+import { styles } from "../../../styles";
 
 export default function ProfileScreen({route, navigation}){
 	const [userData, setUserData] = useState([]);
@@ -42,6 +43,10 @@ export default function ProfileScreen({route, navigation}){
 	
 	return (
 	<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
+		<TouchableOpacity style={styles.settings} onPress={() => navigation.navigate("Settings")}>
+			<Ionicons name="settings" size={32} color="white" />
+		</TouchableOpacity>
+
 		<Profile userData={userData} navigation={navigation} username={username} password={password} />
 		
 		<Seperator />

@@ -1,6 +1,7 @@
-import { View, ScrollView, RefreshControl } from "react-native";
+import { View, ScrollView, RefreshControl, TouchableOpacity } from "react-native";
 import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Ionicons } from '@expo/vector-icons';
 
 import Posts from "../../../components/Posts";
 import { styles } from "../../../styles";
@@ -34,10 +35,16 @@ export default function HomeScreen({route, navigation}){
 	}, []);
 	
 	return (
-		<View style={styles.home}>
-			<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
-				<Posts navigation={navigation} posts={feed} username={username} password={password} />
-			</ScrollView>
-		</View>
+		<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" style={{paddingTop: 20}} />}>
+			<View style={styles.headerIcons}>
+				<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Notifications")}>
+					<Ionicons name="notifications" size={32} color="white" />
+				</TouchableOpacity>
+				<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Post")}>
+					<Ionicons name="add" size={32} color="white" />
+				</TouchableOpacity>
+			</View>
+			<Posts navigation={navigation} posts={feed} username={username} password={password} />
+		</ScrollView>
 	);
 }

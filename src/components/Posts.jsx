@@ -15,16 +15,16 @@ export default function Posts({username, password, posts, navigation, user}){
 		<View key={post.id} style={styles.post.main}>
 			<Username navigation={navigation}>{post.poster}</Username>
 			{post.images.map(image => (
-				<RemoteImage key={image} uri={image} desiredWidth={deviceWidth - 20} style={{borderRadius: 5}} />
+				<RemoteImage key={image} uri={image} desiredWidth={deviceWidth - 30} style={{borderRadius: 2}} />
 			))}
 			<View style={styles.post.bottom}>
 				<View style={{flexDirection: "row", justifyContent: "space-between"}}>
-					<View style={{flexDirection: "row"}}>
-						<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})} style={{marginRight: 10}}>
-							<Ionicons name="chatbox-ellipses" color="white" size={24} />
+					<View style={{flexDirection: "row", marginBottom: 10}}>
+						<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})} style={{marginRight: 15}}>
+							<Ionicons name="chatbox-ellipses" color="white" size={30} />
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => sendPost(post.id)}>
-							<Ionicons name="send-sharp" color="white" size={24} />
+							<Ionicons name="send-sharp" color="white" size={30} />
 						</TouchableOpacity>
 					</View>
 					<View>
@@ -32,7 +32,7 @@ export default function Posts({username, password, posts, navigation, user}){
 						<TouchableOpacity onPress={() => Alert.alert("", "Are you sure you want to delete this post?",
 							[{text: "Delete", onPress: () => { deletePost(username, password, post.id); }}, {text: "Cancel"}]
 						)}>
-							<Ionicons name="trash" color="white" size={24} />
+							<Ionicons name="trash" color="white" size={30} />
 						</TouchableOpacity>
 						) : <></>}
 					</View>
