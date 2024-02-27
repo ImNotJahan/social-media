@@ -6,10 +6,12 @@ import Text from "./Text";
 import RemoteImage from "./RemoteImage";
 import { styles } from "../styles";
 
+const deviceWidth = Dimensions.get('window').width;
+
 export default function Posts({username, password, posts, navigation, user}){
+	console.log(posts);
+
 	if(posts.map == undefined) return (<></>);
-	
-	const deviceWidth = Dimensions.get('window').width;
 
 	return posts.map(post => (
 		<View key={post.id} style={styles.post.main}>

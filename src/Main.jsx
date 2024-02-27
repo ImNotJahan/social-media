@@ -11,13 +11,14 @@ import { SplashStackScreen, TabScreen } from "./containers/Stacks";
 export default function Main() {
 	const [fontsLoaded] = useFonts({ Montserrat_700Bold, Montserrat_500Medium });
 	const username = useSelector((state) => state.auth.username);
+	const password = useSelector(state => state.auth.password);
 	const dispatch = useDispatch();
 
 
 	React.useEffect(() => {
 		const firstLoad = async () => {
-			await get("username").then(username => dispatch(setUsername(username)));
-			await get("password").then(password => dispatch(setPassword(password)));
+			await get("username").then(username => dispatch(setUsername(username)))
+				.then(() => get("password").then(password => dispatch(setPassword(password))));
 		};
 
 		firstLoad();
@@ -28,7 +29,7 @@ export default function Main() {
 		return null;
 	}
 	
-	return username == "" ? 
+	return username == "" || password == "" ? 
 		(<SplashStackScreen />) 
 		:
 		(<TabScreen />);

@@ -12,7 +12,6 @@ export default function HomeScreen({route, navigation}){
 
 	const username = useSelector((state) => state.auth.username);
 	const password = useSelector((state) => state.auth.password);
-	
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		refresh().then(() => setRefreshing(false));
@@ -24,7 +23,7 @@ export default function HomeScreen({route, navigation}){
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: "username=" + username + "&password=" + password
 		};
-		
+		console.log(requestOptions);
 		fetch('https://jahanrashidi.com/sm/api/feed.php', requestOptions)
 			.then(response => response.json())
 			.then(data => setFeed(data));
@@ -35,7 +34,7 @@ export default function HomeScreen({route, navigation}){
 	}, []);
 	
 	return (
-		<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" style={{paddingTop: 20}} />}>
+		<ScrollView style={{paddingTop: 20}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
 			<View style={styles.headerIcons}>
 				<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Notifications")}>
 					<Ionicons name="notifications" size={32} color="white" />
