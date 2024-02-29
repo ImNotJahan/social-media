@@ -76,7 +76,7 @@ export default function ChatScreen({route, navigation}){
 			return (
 			<View style={{paddingTop: 16, flexDirection: "row"}}>
 				<Username navigation={navigation}>{sender}</Username>
-				<Text style={{color: "#555", paddingLeft: 5, fontSize: 12, paddingTop: 3}}>{time}</Text>
+				<Text style={styles.time}>{time}</Text>
 			</View>);
 		} else{
 			return (<></>);

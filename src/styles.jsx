@@ -5,7 +5,8 @@ export const colors = {
 	text: "#ddd",
 	link: "#0a8754", // D47386
 	foreground: "#3a3b3a", // 262626
-	input: "#141414"
+	input: "#141414",
+	faint: "#777",
 };
 
 export const styles = StyleSheet.create({
@@ -126,5 +127,11 @@ export const styles = StyleSheet.create({
 		flexDirection: "row-reverse",
 		gap: 10,
 		marginHorizontal: 10
+	},
+	time: {
+		color: colors.faint, 
+		paddingLeft: 5, 
+		fontSize: 12, 
+		paddingTop: 3
 	}
 });

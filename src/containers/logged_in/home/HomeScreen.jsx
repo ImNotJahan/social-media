@@ -23,7 +23,7 @@ export default function HomeScreen({route, navigation}){
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: "username=" + username + "&password=" + password
 		};
-		console.log(requestOptions);
+		
 		fetch('https://jahanrashidi.com/sm/api/feed.php', requestOptions)
 			.then(response => response.json())
 			.then(data => setFeed(data));

@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { ScrollView, TextInput, Dimensions } from "react-native";
+import { ScrollView, TextInput, Dimensions, View, Switch } from "react-native";
 import { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { useSelector } from "react-redux";
 
 import RemoteImage from "../../components/RemoteImage";
 import AuthButton from "../../components/AuthButton";
 import { styles } from "../../styles";
+import Text from "../../components/Text";
 
 const deviceWidth = Dimensions.get('window').width;
 
 export default function PostScreen({route, navigation}){
 	const [image, setImage] = useState([]);
 	const [description, setDescription] = useState("");
+	const [privatePost, setPrivatePost] = useState(false);
 
 	username = useSelector(state => state.auth.username);
 	password = useSelector(state => state.auth.password);
@@ -21,14 +23,16 @@ export default function PostScreen({route, navigation}){
 		data.append("username", username);
 		data.append("password", password);
 		data.append("description", description);
-		
+		data.append("private", privatePost ? 1 : 0);
+
 		if(image[0] == undefined) return;
 		
 		image.forEach(img => {
 			data.append("picture[]", {
 				name: img.fileName,
 				type: img.type,
-				uri: img.uri});
+				uri: img.uri
+			});
 		});
 		
 		const requestOptions = {
@@ -40,6 +44,7 @@ export default function PostScreen({route, navigation}){
 		
 		setDescription("");
 		setImage("");
+		setPrivatePost(false);
 		
 		navigation.navigate("UserStack", {screen: "Profile", params: {refresh: true}});
 	}
@@ -72,6 +77,10 @@ export default function PostScreen({route, navigation}){
 		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<DisplayImages images={image} />
 		<AuthButton onPress={pickImage}>Select images</AuthButton>
+		<View style={{flexDirection: "row", marginHorizontal: 30, marginBottom: 20, alignItems: "center", gap: 10}}>
+			<Switch value={privatePost} onValueChange={setPrivatePost} />
+			<Text>Private post</Text>
+		</View>
 		<AuthButton onPress={post}>Post</AuthButton>
 	</ScrollView>);
 }

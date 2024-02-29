@@ -9,28 +9,32 @@ import { styles } from "../styles";
 const deviceWidth = Dimensions.get('window').width;
 
 export default function Posts({username, password, posts, navigation, user}){
-	console.log(posts);
-
 	if(posts.map == undefined) return (<></>);
 
 	return posts.map(post => (
 		<View key={post.id} style={styles.post.main}>
-			<Username navigation={navigation}>{post.poster}</Username>
+			<View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 2}}>
+				<Username navigation={navigation}>{post.poster}</Username>
+				<Text style={styles.time}>{post.posted == "0000-00-00 00:00:00" ? "" : post.posted}</Text>
+			</View>
 			{post.images.map(image => (
 				<RemoteImage key={image} uri={image} desiredWidth={deviceWidth - 30} style={{borderRadius: 2}} />
 			))}
 			<View style={styles.post.bottom}>
 				<View style={{flexDirection: "row", justifyContent: "space-between"}}>
-					<View style={{flexDirection: "row", marginBottom: 10}}>
-						<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})} style={{marginRight: 15}}>
+					<View style={{flexDirection: "row", marginBottom: 10, gap: 15}}>
+						<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})}>
 							<Ionicons name="chatbox-ellipses" color="white" size={30} />
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => sendPost(post.id)}>
 							<Ionicons name="send-sharp" color="white" size={30} />
 						</TouchableOpacity>
+						<TouchableOpacity onPress={() => repost(post.id)}>
+							<Ionicons name="repeat" color="white" size={30} />
+						</TouchableOpacity>
 					</View>
 					<View>
-						{username == post.poster ? (
+						{post.can_delete ? (
 						<TouchableOpacity onPress={() => Alert.alert("", "Are you sure you want to delete this post?",
 							[{text: "Delete", onPress: () => { deletePost(username, password, post.id); }}, {text: "Cancel"}]
 						)}>
@@ -45,7 +49,7 @@ export default function Posts({username, password, posts, navigation, user}){
 	))
 }
 
-export async function deletePost(username, password, id){
+async function deletePost(username, password, id){
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -55,6 +59,10 @@ export async function deletePost(username, password, id){
 	fetch('https://jahanrashidi.com/sm/api/delete_post.php', requestOptions);
 }
 
-export function sendPost(id){
+function sendPost(id){
 	
+}
+
+function repost(id){
+
 }

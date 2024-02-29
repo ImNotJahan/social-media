@@ -1,12 +1,16 @@
 import { TouchableOpacity, View, Image, Button, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { openBrowserAsync } from 'expo-web-browser';
+import { useDispatch } from "react-redux";
 
 import Text from "./Text";
 import { styles, colors } from "../styles";
 import { clearAll } from "../storage";
+import { setUsername, setPassword } from "../slice";
 
 export default function Profile({navigation, userData, username, password}){
+	const dispatch = useDispatch();
+
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -16,8 +20,8 @@ export default function Profile({navigation, userData, username, password}){
 	function logout(){
 		clearAll();
 		
-		//setUser(null);
-		//setPassword(null);
+		dispatch(setUsername(""));
+		dispatch(setPassword(""));
 	}
 
 	function followButton(){

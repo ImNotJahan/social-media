@@ -53,14 +53,17 @@ export default function CommentsScreen({route, navigation}){
 		refresh();
 	}, [post_id]);
 
+	let i = 0;
+
 	return (
 	<ScrollView>
 		<View>
-		{comments.map(comment => (
-		<View style={{marginBottom: 10}}>
+		{comments.map(comment => {
+		i++;
+		return (<View style={{marginBottom: 10}} key={i}>
 			<Username navigation={navigation}>{comment.poster}</Username>
 			<Text>{comment.text}</Text>
-		</View>))}
+		</View>)})}
 		</View>
 	
 		<View style={{flexDirection: 'row', marginVertical: 10, backgroundColor: "#141414", borderRadius: 10}}>
