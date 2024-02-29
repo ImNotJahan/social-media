@@ -1,5 +1,6 @@
-import { View, TouchableOpacity, Alert, Dimensions } from "react-native";
+import { View, TouchableOpacity, Alert, Dimensions, Modal } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from "react";
 
 import Username from "./Username";
 import Text from "./Text";
@@ -11,10 +12,20 @@ const deviceWidth = Dimensions.get('window').width;
 export default function Posts({username, password, posts, navigation, user}){
 	if(posts.map == undefined) return (<></>);
 
-	return posts.map(post => (
+	const [shareOpen, setShareOpen] = useState(false);
+
+	function sendPost(id){
+		setShareOpen(true);
+	}
+
+	return (
+	<View>{posts.map(post => (
 		<View key={post.id} style={styles.post.main}>
 			<View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 2}}>
-				<Username navigation={navigation}>{post.poster}</Username>
+				<View style={{flexDirection: "row"}}>
+					<Username navigation={navigation}>{post.poster}</Username>
+					{post.private ? <Text style={styles.time}>private</Text> : <></>}
+				</View>
 				<Text style={styles.time}>{post.posted == "0000-00-00 00:00:00" ? "" : post.posted}</Text>
 			</View>
 			{post.images.map(image => (
@@ -36,17 +47,27 @@ export default function Posts({username, password, posts, navigation, user}){
 					<View>
 						{post.can_delete ? (
 						<TouchableOpacity onPress={() => Alert.alert("", "Are you sure you want to delete this post?",
-							[{text: "Delete", onPress: () => { deletePost(username, password, post.id); }}, {text: "Cancel"}]
+							[{text: "Delete", onPress: () => { deletePost(username, password, post.id); }}, {text: "Cancel"}],
+							{userInterfaceStyle: "dark"}
 						)}>
 							<Ionicons name="trash" color="white" size={30} />
 						</TouchableOpacity>
 						) : <></>}
 					</View>
 				</View>
-				<Text style={{flex: 1}}>{post.description.desc}</Text>
 			</View>
-		</View>
-	))
+		</View>))}
+		<Modal visible={shareOpen} animationType="slide" transparent={true}>
+			<View style={styles.modal}>
+				<View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 5}}>
+					<Text style={{fontSize: 26}}>Share</Text>
+					<TouchableOpacity onPress={() => setShareOpen(false)}>
+						<Ionicons name="close" color="white" size={30} />
+					</TouchableOpacity>
+				</View>
+			</View>
+		</Modal>
+	</View>);
 }
 
 async function deletePost(username, password, id){
@@ -57,10 +78,6 @@ async function deletePost(username, password, id){
 	};
 	
 	fetch('https://jahanrashidi.com/sm/api/delete_post.php', requestOptions);
-}
-
-function sendPost(id){
-	
 }
 
 function repost(id){

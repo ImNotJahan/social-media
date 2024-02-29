@@ -133,5 +133,12 @@ export const styles = StyleSheet.create({
 		paddingLeft: 5, 
 		fontSize: 12, 
 		paddingTop: 3
+	},
+	modal: {
+		backgroundColor: colors.background,
+		position: "absolute",
+		bottom: 0,
+		height: "30%",
+		width: "100%"
 	}
 });

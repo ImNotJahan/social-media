@@ -49,10 +49,20 @@ export default function Profile({navigation, userData, username, password}){
 	async function unfollow(){
 		fetch('https://jahanrashidi.com/sm/api/unfollow.php', requestOptions);
 	}
+
+	function gotoChat(){
+		fetch("https://jahanrashidi.com/sm/api/create_chat.php", requestOptions).then(response => response.json())
+			.then(data => navigation.navigate("ChatStack", {screen: "Chat", initial: false, params: {chat_id: data.chat_id, receiver: userData.username}}));
+	}
 	
 	if(userData.pfp == undefined) return (<></>);
 	
-	return (
+	return (<>
+	{username == userData.username ? (<></>) : (
+		<TouchableOpacity style={styles.settings} onPress={gotoChat}>
+			<Ionicons name="chatbubble" size={32} color="white" />
+		</TouchableOpacity>
+	)}
 	<View style={styles.profile}>
 		<Image source={{uri: userData.pfp}} style={styles.pfp} />
 		<View style={{marginVertical: 16, flexDirection: "row"}}>
@@ -73,10 +83,11 @@ export default function Profile({navigation, userData, username, password}){
 			<View style={{marginVertical: 10, flexDirection: "row"}}>
 				<Button style={styles.link} color={colors.link} title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
 				<Button style={styles.link} color={colors.link} title="Log-out" onPress={() => Alert.alert("Log-out", "Are you sure you want to log-out?",
-							[{text: "Log-out", onPress: () => { logout(); }}, {text: "Cancel"}]
+							[{text: "Log-out", onPress: () => { logout(); }}, {text: "Cancel"}],
+							{userInterfaceStyle: "dark"}
 						)} />
 			</View>) : (<></>)
 		}
 	</View>
-	);
+	</>);
 }

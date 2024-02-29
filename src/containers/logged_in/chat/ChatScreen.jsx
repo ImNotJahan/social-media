@@ -16,7 +16,7 @@ export default function ChatScreen({route, navigation}){
 	const [messages, setMessages] = useState([]);
 	const [message, setMessage] = useState("");
 	let lastId = -1;
-	
+
 	async function refresh(){
 		const data = new FormData();
 		data.append("username", username);
@@ -94,7 +94,7 @@ export default function ChatScreen({route, navigation}){
 			</View>))}
 			
 			<View style={{flexDirection: 'row', marginVertical: 10, backgroundColor: "#141414", borderRadius: 10}}>
-				<TextInput style={styles.messageInput} value={message} onChangeText={setMessage} keyboardAppearance="dark" />
+				<TextInput style={styles.messageInput} value={message} onChangeText={setMessage} keyboardAppearance="dark" onSubmitEditing={sendMessage} />
 				<TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
 					<Ionicons name="send-sharp" color="#ddd" size={32} style={{marginTop: 4, marginRight: 4}} />
 				</TouchableOpacity>

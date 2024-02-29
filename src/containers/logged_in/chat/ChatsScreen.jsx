@@ -36,7 +36,7 @@ export default function ChatsScreen({route, navigation}){
 	<ScrollView>
 	{chats.map(chat => (
 		<TouchableOpacity key={chat.receiver.username} onPress={() => navigation.navigate("Chat", {chat_id: chat.id, receiver: chat.receiver.username})} style={styles.chat}>
-			<Image source={{uri: chat.receiver.pfp}} style={{width: 36, height: 36, borderRadius: 18}} />
+			<Image source={{uri: chat.receiver.pfp}} style={{width: 36, height: 36, borderRadius: 18, marginRight: 10}} />
 			<View>
 				<Text style={styles.link}>{chat.receiver.username}</Text>
 				<Text>{chat.last_message}</Text>
