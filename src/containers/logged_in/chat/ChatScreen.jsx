@@ -7,6 +7,7 @@ import Username from "../../../components/Username";
 import Text from "../../../components/Text";
 import KeyboardShift from "../../../components/KeyboardShift";
 import { styles } from "../../../styles";
+import Message from "../../../components/Message";
 
 export default function ChatScreen({route, navigation}){
 	username = useSelector(state => state.auth.username);
@@ -90,7 +91,7 @@ export default function ChatScreen({route, navigation}){
 			{messages.map(message => (
 			<View key={message.id}>
 				{addUsername(message.sender, message.sent)}
-				<Text>{message.message.text}</Text>
+				<Message obj={message.message} />
 			</View>))}
 			
 			<View style={{flexDirection: 'row', marginVertical: 10, backgroundColor: "#141414", borderRadius: 10}}>

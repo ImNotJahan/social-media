@@ -60,7 +60,7 @@ export default function NotificationsScreen({route, navigation}){
 
 	return (
 	<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" style={{paddingTop: 25}} />}>
-	{notifications.map(notification => parseNotification(notification))}
+	{notifications.reverse().map(notification => parseNotification(notification))}
 	</ScrollView>
 	);
 }

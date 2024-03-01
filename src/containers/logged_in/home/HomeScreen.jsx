@@ -18,7 +18,7 @@ export default function HomeScreen({route, navigation}){
 	}, []);
 
 	async function refresh(){
-		const requestOptions = {
+		let requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: "username=" + username + "&password=" + password
