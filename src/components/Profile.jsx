@@ -19,7 +19,9 @@ export default function Profile({navigation, userData, username, password}){
 
 	function logout(){
 		clearAll();
-		
+				
+		fetch("https://jahanrashidi.com/sm/api/set_notification_token.php", requestOptions);
+
 		dispatch(setUsername(""));
 		dispatch(setPassword(""));
 	}

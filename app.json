@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "Jwitter",
+    "name": "Agur",
     "slug": "social-media",
-    "version": "1.0.0",
+    "privacy": "unlisted",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#282828"
+      "backgroundColor": "#2a2b2a"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -17,9 +18,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.imnotjahan.socialmedia",
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-5663733977589649~5891451857"
-      }
+      "buildNumber": "1.0.1"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,9 +26,6 @@
         "backgroundColor": "#282828"
       },
       "package": "com.imnotjahan.socialmedia"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {

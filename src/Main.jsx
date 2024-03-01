@@ -29,7 +29,7 @@ export default function Main() {
 		return null;
 	}
 	
-	return username == "" || password == "" ? 
+	return username == "" || password == "" || username == null ? 
 		(<SplashStackScreen />) 
 		:
 		(<TabScreen />);
