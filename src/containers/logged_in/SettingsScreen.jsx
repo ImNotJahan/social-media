@@ -16,7 +16,8 @@ export default function SettingsScreen({navigation}){
 
 	function logout(){
 		clearAll();
-				
+
+		// unassociate app instance notification token with previous account when logged out		
 		fetch("https://jahanrashidi.com/sm/api/set_notification_token.php", requestOptions);
 
 		dispatch(setUsername(""));

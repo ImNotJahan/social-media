@@ -6,13 +6,13 @@ import RemoteImage from "./RemoteImage";
 
 const deviceWidth = Dimensions.get('window').width;
 
-export default function PreviewPost({post, navigation}){
+export default function PreviewPost({post, navigation, hold}){
 	if(post.description == null) return (<></>);
 
 	return (
 	<View style={{paddingVertical: 10}}>
 		<TouchableOpacity style={styles.post.previewMain} onPress={() => 
-			{navigation.navigate("PostView", {post: post})}}>
+			{navigation.navigate("PostView", {post: post})}} onLongPress={hold}>
 			<View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 2}}>
 				<View style={{flexDirection: "row"}}>
 					<Text style={styles.link}>{post.poster}</Text>

@@ -31,7 +31,7 @@ export default function Message({obj, messageOptions, sender, id, navigation}){
 				.then(response => response.json()).then(data => setPost(data));
 		}, []);
 
-		content = (<Text><PreviewPost post={post} navigation={navigation} /></Text>);
+		content = (<Text><PreviewPost post={post} navigation={navigation} hold={() => messageOptions(id)} /></Text>);
 	}
 	else content = (<Text>Unknown message type</Text>);
 
