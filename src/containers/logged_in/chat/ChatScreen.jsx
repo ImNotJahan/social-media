@@ -113,7 +113,7 @@ export default function ChatScreen({route, navigation}){
 	<View>
 		<KeyboardShift>
 			<ScrollView ref={ref => {this.scrollView = ref}}
-			onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})} style={{paddingHorizontal: 10}}>
+			onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})} style={{paddingHorizontal: 10, height: "100%"}}>
 				{messages.map(message => (
 				<View key={message.id}>
 					{addUsername(message.sender, message.sent)}

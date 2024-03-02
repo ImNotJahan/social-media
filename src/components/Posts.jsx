@@ -7,11 +7,11 @@ import { styles } from "../styles";
 import Post from "./Post";
 
 export default function Posts({username, password, posts, navigation, user}){
-	if(posts.map == undefined) return (<></>);
-
 	const [shareOpen, setShareOpen] = useState(false);
 	const [shareId, setShareId] = useState(-1);
 	const [recents, setRecents] = useState([]);
+
+	if(posts == undefined || posts.map == undefined) return (<></>);
 
 	useEffect(() => {
 		const requestOptions = {
@@ -48,8 +48,20 @@ export default function Posts({username, password, posts, navigation, user}){
 		fetch('https://jahanrashidi.com/sm/api/send_post.php', requestOptions);
 	}
 
+	async function deletePost(username, password, id){
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: "username=" + username + "&password=" + password + "&id=" + id
+		};
+		
+		fetch('https://jahanrashidi.com/sm/api/delete_post.php', requestOptions);
+
+		//posts = posts.filter(obj => obj.id !== id);
+	}
+
 	return (
-	<View>{posts.map(post => (<Post username={username} password={password} post={post} navigation={navigation} user={user} sendPost={sendPost} key={post.id} />))}
+	<View>{posts.map(post => (<Post username={username} password={password} post={post} navigation={navigation} user={user} sendPost={sendPost} key={post.id} deletePost={deletePost} />))}
 		<Modal visible={shareOpen} animationType="slide" transparent={true}>
 			<View style={styles.modal}>
 				<View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 5}}>

@@ -24,6 +24,11 @@ export const styles = StyleSheet.create({
 			margin: 5
 		},
 		bottom: {
+		},
+		previewMain: {
+			padding: 10,
+			backgroundColor: colors.foreground,
+			borderRadius: 5
 		}
 	},
 	profile: {
