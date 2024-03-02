@@ -122,7 +122,7 @@ export function UserStackScreen(){
 export function ChatStackScreen(){
 	return (
 	<ChatStack.Navigator screenOptions={styles.stackNav}>
-		<ChatStack.Screen name="Chats" component={ChatsScreen} />
+		<ChatStack.Screen name="Chats" options={{headerShown: false}} component={ChatsScreen} />
 		<ChatStack.Screen name="Chat" component={ChatScreen} />
 	</ChatStack.Navigator>
 	);
@@ -131,7 +131,7 @@ export function ChatStackScreen(){
 export function SearchStackScreen(){
 	return (
 	<ChatStack.Navigator screenOptions={styles.stackNav}>
-		<ChatStack.Screen name="Search" component={SearchScreen} />
+		<ChatStack.Screen name="Search" options={{headerShown: false}} component={SearchScreen} />
 		<ChatStack.Screen name="Results" component={ResultsScreen} />
 	</ChatStack.Navigator>
 	);
