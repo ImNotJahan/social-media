@@ -1,30 +1,16 @@
 import { TouchableOpacity, View, Image, Button, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { openBrowserAsync } from 'expo-web-browser';
-import { useDispatch } from "react-redux";
 
 import Text from "./Text";
 import { styles, colors } from "../styles";
-import { clearAll } from "../storage";
-import { setUsername, setPassword } from "../slice";
 
 export default function Profile({navigation, userData, username, password}){
-	const dispatch = useDispatch();
-
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: "username=" + username + "&password=" + password + "&user=" + userData.username
 	};
-
-	function logout(){
-		clearAll();
-				
-		fetch("https://jahanrashidi.com/sm/api/set_notification_token.php", requestOptions);
-
-		dispatch(setUsername(""));
-		dispatch(setPassword(""));
-	}
 
 	function followButton(){
 		if(userData?.username === username) return (<></>);
@@ -84,10 +70,6 @@ export default function Profile({navigation, userData, username, password}){
 		{userData.username == username ? (
 			<View style={{marginVertical: 10, flexDirection: "row"}}>
 				<Button style={styles.link} color={colors.link} title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
-				<Button style={styles.link} color={colors.link} title="Log-out" onPress={() => Alert.alert("Log-out", "Are you sure you want to log-out?",
-							[{text: "Log-out", onPress: () => { logout(); }}, {text: "Cancel"}],
-							{userInterfaceStyle: "dark"}
-						)} />
 			</View>) : (<></>)
 		}
 	</View>
