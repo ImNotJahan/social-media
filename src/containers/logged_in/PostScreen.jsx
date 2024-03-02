@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { ScrollView, TextInput, Dimensions, View, Switch } from "react-native";
+import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator } from "react-native";
 import { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { useSelector } from "react-redux";
 
-import RemoteImage from "../../components/RemoteImage";
 import AuthButton from "../../components/AuthButton";
-import { styles } from "../../styles";
+import { styles, colors } from "../../styles";
 import Text from "../../components/Text";
 
 const deviceWidth = Dimensions.get('window').width;
@@ -14,6 +13,7 @@ export default function PostScreen({route, navigation}){
 	const [image, setImage] = useState([]);
 	const [description, setDescription] = useState("");
 	const [privatePost, setPrivatePost] = useState(false);
+	const [uploading, setUploading] = useState(false);
 
 	username = useSelector(state => state.auth.username);
 	password = useSelector(state => state.auth.password);
@@ -40,12 +40,16 @@ export default function PostScreen({route, navigation}){
 			body: data
 		};
 		
-		fetch('https://jahanrashidi.com/sm/api/post.php', requestOptions);
-		
+		setUploading(true);
 		setDescription("");
 		setImage("");
 		setPrivatePost(false);
+
+		await fetch('https://jahanrashidi.com/sm/api/post.php', requestOptions);
+
+		setUploading(false);
 		
+		navigation.navigate("Feed");
 		navigation.navigate("UserStack", {screen: "Profile", params: {refresh: true}});
 	}
 	
@@ -69,10 +73,16 @@ export default function PostScreen({route, navigation}){
 		if(images[0] == undefined) return (<></>);
 		
 		return images.map(img => 
-			(<RemoteImage key={img.uri} uri={img.uri} desiredWidth={deviceWidth - 20} style={{margin: 10, borderRadius: 5}} />));
+			(<Image key={img.uri} source={{uri: img.uri}} width={deviceWidth - 64} height={deviceWidth / img.width * img.height} 
+					style={{marginHorizontal: 32, marginVertical: 10, borderRadius: 5}} />));
 	}
 	
-	return (
+	if(uploading) return (
+	<View style={{flex: 1, justifyContent: "space-around"}}>
+		<ActivityIndicator size="large" color={colors.link} />
+	</View>
+	);
+	else return (
 	<ScrollView>
 		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<DisplayImages images={image} />
