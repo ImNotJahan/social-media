@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, TouchableOpacity, Image, View } from "react-native";
+import { FlatList, TouchableOpacity, Image, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 
 import Text from "../../../components/Text";
@@ -33,16 +33,16 @@ export default function ChatsScreen({route, navigation}){
 	}, []);
 
 	return (
-	<ScrollView style={{paddingTop: 30}}>
-	{chats.map(chat => (
-		<TouchableOpacity key={chat.receiver.username} onPress={() => navigation.navigate("Chat", {chat_id: chat.id, receiver: chat.receiver.username})} style={styles.chat}>
-			<Image source={{uri: chat.receiver.pfp}} style={{width: 36, height: 36, borderRadius: 18, marginRight: 10}} />
-			<View>
-				<Text style={styles.link}>{chat.receiver.username}</Text>
-				<Text>{chat.last_message}</Text>
-			</View>
-		</TouchableOpacity>
-	))}
-	</ScrollView>
+	<SafeAreaView style={{margin: 10}}>
+		<FlatList data={chats} renderItem={({item}) => (
+			<TouchableOpacity onPress={() => navigation.navigate("Chat", {chat_id: item.id, receiver: item.receiver.username})} style={styles.chat}>
+				<Image source={{uri: item.receiver.pfp}} style={{width: 36, height: 36, borderRadius: 18, marginRight: 10}} />
+				<View>
+					<Text style={styles.link}>{item.receiver.username}</Text>
+					<Text>{item.last_message}</Text>
+				</View>
+			</TouchableOpacity>
+		)} keyExtractor={chat => chat.receiver.username} />
+	</SafeAreaView>
 	);
 }

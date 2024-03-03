@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Image, Button, Alert } from "react-native";
+import { TouchableOpacity, View, Image, Button, Alert, SafeAreaView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { openBrowserAsync } from 'expo-web-browser';
 
@@ -45,33 +45,38 @@ export default function Profile({navigation, userData, username, password}){
 	
 	if(userData.pfp == undefined) return (<></>);
 	
-	return (<>
-	{username == userData.username ? (<></>) : (
-		<TouchableOpacity style={styles.settings} onPress={gotoChat}>
-			<Ionicons name="chatbubble" size={32} color="white" />
-		</TouchableOpacity>
-	)}
-	<View style={styles.profile}>
-		<Image source={{uri: userData.pfp}} style={styles.pfp} />
-		<View style={{marginVertical: 16, flexDirection: "row"}}>
-			<Text style={{fontSize: 32, marginRight: 4}}>{userData.display_name}</Text>
-			{followButton()}
+	return (
+	<View>
+		{username == userData.username ? (
+			<TouchableOpacity style={styles.settings} onPress={() => navigation.navigate("Settings")}>
+				<Ionicons name="settings" size={32} color="white" />
+			</TouchableOpacity>
+		) : (
+			<TouchableOpacity style={styles.settings} onPress={gotoChat}>
+				<Ionicons name="chatbubble" size={32} color="white" />
+			</TouchableOpacity>
+		)}
+		<View style={styles.profile}>
+			<Image source={{uri: userData.pfp}} style={styles.pfp} />
+			<View style={{marginVertical: 16, flexDirection: "row"}}>
+				<Text style={{fontSize: 32, marginRight: 4}}>{userData.display_name}</Text>
+				{followButton()}
+			</View>
+			<View style={{marginBottom: 10, flexDirection: "row"}}>
+				<Button style={styles.link} color={colors.link} title={userData?.friends?.followers.length + " followers"} 
+					onPress={() => navigation.navigate("Followers", {user: userData.username, referrerTitle: userData.display_name})} />
+				<Button style={styles.link} color={colors.link} title={userData?.friends?.following.length + " following"} 
+					onPress={() => navigation.navigate("Following", {user: userData.username, referrerTitle: userData.display_name})} />
+			</View>
+			{userData.bio?.link == "" ? (<></>) : (<Button style={styles.link} color={colors.link} title={userData.bio?.link} onPress={() => openBrowserAsync(userData.bio?.link)} />)}
+			
+			<Text>{userData.bio?.text}</Text>
+			
+			{userData.username == username ? (
+				<View style={{marginVertical: 10, flexDirection: "row"}}>
+					<Button style={styles.link} color={colors.link} title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
+				</View>) : (<></>)
+			}
 		</View>
-		<View style={{marginBottom: 10, flexDirection: "row"}}>
-			<Button style={styles.link} color={colors.link} title={userData?.friends?.followers.length + " followers"} 
-				onPress={() => navigation.navigate("Followers", {user: userData.username, referrerTitle: userData.display_name})} />
-			<Button style={styles.link} color={colors.link} title={userData?.friends?.following.length + " following"} 
-				onPress={() => navigation.navigate("Following", {user: userData.username, referrerTitle: userData.display_name})} />
-		</View>
-		{userData.bio?.link == "" ? (<></>) : (<Button style={styles.link} color={colors.link} title={userData.bio?.link} onPress={() => openBrowserAsync(userData.bio?.link)} />)}
-		
-		<Text>{userData.bio?.text}</Text>
-		
-		{userData.username == username ? (
-			<View style={{marginVertical: 10, flexDirection: "row"}}>
-				<Button style={styles.link} color={colors.link} title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
-			</View>) : (<></>)
-		}
-	</View>
-	</>);
+	</View>);
 }

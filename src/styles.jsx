@@ -32,7 +32,6 @@ export const styles = StyleSheet.create({
 		}
 	},
 	profile: {
-		marginTop: 25,
 		alignItems: "center",
 		marginHorizontal: 10
 	},

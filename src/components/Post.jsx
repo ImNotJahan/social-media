@@ -86,11 +86,11 @@ async function repost(username, password, id){
 		.then(data => {
 			switch(data.response){
 			case "Success":
-				Alert.alert("Reposted");
+				Alert.alert("Reposted", "", [], {userInterfaceStyle: "dark"});
 				break;
 
 			default :
-				Alert.alert(data.response);
+				Alert.alert(data.response, "", [], {userInterfaceStyle: "dark"});
 				break;
 			}
 		});

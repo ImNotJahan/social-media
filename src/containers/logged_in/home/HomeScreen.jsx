@@ -1,4 +1,4 @@
-import { View, ScrollView, RefreshControl, TouchableOpacity } from "react-native";
+import { View, SafeAreaView, RefreshControl, TouchableOpacity } from "react-native";
 import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Ionicons } from '@expo/vector-icons';
@@ -34,16 +34,18 @@ export default function HomeScreen({route, navigation}){
 	}, []);
 	
 	return (
-		<ScrollView style={{paddingTop: 20}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
-			<View style={styles.headerIcons}>
-				<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Notifications")}>
-					<Ionicons name="notifications" size={32} color="white" />
-				</TouchableOpacity>
-				<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Post")}>
-					<Ionicons name="add" size={32} color="white" />
-				</TouchableOpacity>
-			</View>
-			<Posts navigation={navigation} posts={feed} username={username} password={password} />
-		</ScrollView>
+		<SafeAreaView>
+			<Posts navigation={navigation} posts={feed} username={username} password={password} 
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />} header={(
+				<View style={styles.headerIcons}>
+					<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Notifications")}>
+						<Ionicons name="notifications" size={32} color="white" />
+					</TouchableOpacity>
+					<TouchableOpacity styles={{zIndex: 1}} onPress={() => navigation.navigate("Post")}>
+						<Ionicons name="add" size={32} color="white" />
+					</TouchableOpacity>
+				</View>
+			)} />
+		</SafeAreaView>
 	);
 }

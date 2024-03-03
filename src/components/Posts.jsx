@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Dimensions, Modal, Image } from "react-native";
+import { View, TouchableOpacity, Dimensions, Modal, Image, FlatList } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect } from "react";
 
@@ -6,7 +6,7 @@ import Text from "./Text";
 import { styles } from "../styles";
 import Post from "./Post";
 
-export default function Posts({username, password, posts, navigation, user}){
+export default function Posts({username, password, posts, navigation, user, header, refreshControl}){
 	const [shareOpen, setShareOpen] = useState(false);
 	const [shareId, setShareId] = useState(-1);
 	const [recents, setRecents] = useState([]);
@@ -61,7 +61,10 @@ export default function Posts({username, password, posts, navigation, user}){
 	}
 
 	return (
-	<View>{posts.map(post => (<Post username={username} password={password} post={post} navigation={navigation} user={user} sendPost={sendPost} key={post.id} deletePost={deletePost} />))}
+	<View>
+		<FlatList data={posts} keyExtractor={post => post.id} ListHeaderComponent={header} refreshControl={refreshControl} renderItem={({item}) => (
+			<Post username={username} password={password} post={item} navigation={navigation} user={user} sendPost={sendPost} deletePost={deletePost} />
+		)} />
 		<Modal visible={shareOpen} animationType="slide" transparent={true}>
 			<View style={styles.modal}>
 				<View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 5}}>

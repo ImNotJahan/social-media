@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, ScrollView, TouchableOpacity, TextInput, Modal } from "react-native";
+import { View, FlatList, TouchableOpacity, TextInput, Modal, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 
@@ -92,7 +92,7 @@ export default function ChatScreen({route, navigation}){
 	lastSender = "";
 	
 	function addUsername(sender, time){
-		if(sender !== lastSender){
+		if(sender != lastSender){
 			lastSender = sender;
 			return (
 			<View style={{paddingTop: 16, flexDirection: "row"}}>
@@ -110,23 +110,22 @@ export default function ChatScreen({route, navigation}){
 	}
 	
 	return (
-	<View>
+	<SafeAreaView>
 		<KeyboardShift>
-			<ScrollView ref={ref => {this.scrollView = ref}}
-			onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})} style={{paddingHorizontal: 10, height: "100%"}}>
-				{messages.map(message => (
-				<View key={message.id}>
-					{addUsername(message.sender, message.sent)}
-					<Message obj={message.message} messageOptions={messageOptions} sender={message.sender} id={message.id} navigation={navigation} />
-				</View>))}
-				
+			<FlatList ref={ref => {this.flatList = ref}} onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})} style={{paddingHorizontal: 10}}
+			data={messages} keyExtractor={message => message.id} renderItem={({item}) => (
+				<View key={item.id}>
+					{addUsername(item.sender, item.sent)}
+					<Message obj={item.message} messageOptions={messageOptions} sender={item.sender} id={item.id} navigation={navigation} />
+				</View>
+			)} ListFooterComponent={(
 				<View style={{flexDirection: 'row', marginVertical: 10, backgroundColor: "#141414", borderRadius: 10}}>
 					<TextInput style={styles.messageInput} value={message} onChangeText={setMessage} keyboardAppearance="dark" onSubmitEditing={sendMessage} />
 					<TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
 						<Ionicons name="send-sharp" color="#ddd" size={32} style={{marginTop: 4, marginRight: 4}} />
 					</TouchableOpacity>
 				</View>
-			</ScrollView>
+			)} />
 		</KeyboardShift>
 		<Modal visible={optionsOpen} animationType="slide" transparent={true}>
 			<View style={[styles.modal, {padding: 5}]}>
@@ -144,6 +143,6 @@ export default function ChatScreen({route, navigation}){
 				</View>
 			</View>
 		</Modal>
-	</View>
+	</SafeAreaView>
 	);
 }

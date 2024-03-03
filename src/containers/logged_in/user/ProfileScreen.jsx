@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, View, RefreshControl, TouchableOpacity } from "react-native";
+import { ScrollView, View, RefreshControl, TouchableOpacity, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -42,18 +42,12 @@ export default function ProfileScreen({route, navigation}){
 	}, []);
 	
 	return (
-	<ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}>
-		<TouchableOpacity style={styles.settings} onPress={() => navigation.navigate("Settings")}>
-			<Ionicons name="settings" size={32} color="white" />
-		</TouchableOpacity>
+	<SafeAreaView>
+		<Posts posts={posts} navigation={navigation} username={username} password={password} header={(<>
+			<Profile navigation={navigation} userData={userData} username={username} password={password} />
 
-		<Profile userData={userData} navigation={navigation} username={username} password={password} />
-		
-		<Seperator />
-		
-		<View>
-			<Posts posts={posts} navigation={navigation} user={true} username={username} password={password} />
-		</View>
-	</ScrollView>
+			<Seperator />
+		</>)} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}/>	
+	</SafeAreaView>
 	);
 }
