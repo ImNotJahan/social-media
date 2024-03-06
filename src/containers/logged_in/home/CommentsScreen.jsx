@@ -1,4 +1,4 @@
-import { View, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { View, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
@@ -56,22 +56,18 @@ export default function CommentsScreen({route, navigation}){
 	let i = 0;
 
 	return (
-	<ScrollView>
-		<View>
-		{comments.map(comment => {
-		i++;
-		return (<View style={{marginBottom: 10}} key={i}>
-			<Username navigation={navigation}>{comment.poster}</Username>
-			<Text>{comment.text}</Text>
-		</View>)})}
-		</View>
-	
-		<View style={{flexDirection: 'row', marginVertical: 10, backgroundColor: "#141414", borderRadius: 10}}>
-			<TextInput style={styles.messageInput} value={message} onChangeText={setMessage} keyboardAppearance="dark" />
+	<FlatList data={comments} extractKey={comment => i++} renderItem={({item}) => (
+		<TouchableOpacity style={{margin: 10}} key={i} /*onLongPress={() -> commentOptions(i)}*/>
+			<Username navigation={navigation}>{item.poster}</Username>
+			<Text>{item.text}</Text>
+		</TouchableOpacity>
+	)} ListFooterComponent={(
+		<View style={{flexDirection: 'row', margin: 5, backgroundColor: "#141414", borderRadius: 10}}>
+			<TextInput style={styles.messageInput} value={message} onChangeText={setMessage} keyboardAppearance="dark" onSubmitEditing={comment} />
 			<TouchableOpacity onPress={comment} style={styles.sendButton}>
 				<Ionicons name="send-sharp" color="#ddd" size={32} style={{marginTop: 4, marginRight: 4}} />
 			</TouchableOpacity>
 		</View>
-	</ScrollView>
+	)} />
 	);
 }

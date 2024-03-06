@@ -9,14 +9,15 @@ export default function Album({images, deviceWidth}){
 	if(images.length > 1){
 		return (
 		<>
-			<Carousel data={images} sliderWidth={deviceWidth - 30} itemWidth={deviceWidth - 30} onSnapToItem={setAlbumIndex} renderItem=
+			<Carousel data={images} customContainerStyle= {{height: "min-content"}} sliderWidth={deviceWidth - 30} itemWidth={deviceWidth - 30} 
+			onSnapToItem={setAlbumIndex} renderItem=
 			{({itemIndex, item}) => (<RemoteImage key={itemIndex} uri={item} desiredWidth={deviceWidth - 30} style={{borderRadius: 2}} />)} />
-			<Pagination dotsLength={images.length} activeDotIndex={albumIndex} containerStyle={{marginVertical: -15}} />
+			<Pagination dotsLength={images.length} activeDotIndex={albumIndex} containerStyle={{paddingVertical: 0, paddingTop: 10}} />
 		</>
 		);
 	} else if(images.length == 1){
 		return (
-		<RemoteImage key={images[0]} uri={images[0]} desiredWidth={deviceWidth - 30} style={{borderRadius: 2}} />
+		<RemoteImage key={images[0]} uri={images[0]} desiredWidth={deviceWidth - 30} style={{borderRadius: 2, marginBottom: 17}} />
 		);
 	} else {
 		return (<></>);

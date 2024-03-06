@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { ScrollView, View, RefreshControl, SafeAreaView } from "react-native";
+import { ScrollView, View, RefreshControl, SafeAreaView, ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
 
 import Seperator from "../../../components/Seperator";
@@ -12,6 +12,7 @@ export default function UserScreen({route, navigation}){
 	const [userData, setUserData] = useState([]);
 	const [posts, setPosts] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const [loadingMore, setLoadingMore] = useState(false);
 
 	username = useSelector(state => state.auth.username);
 	password = useSelector(state => state.auth.password);
@@ -24,7 +25,7 @@ export default function UserScreen({route, navigation}){
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: "username=" + username + "&password=" + password + "&user=" + user
+		body: "username=" + username + "&password=" + password + "&user=" + user + "&new=1"
 	};
 	
 	async function refresh(){
@@ -35,6 +36,24 @@ export default function UserScreen({route, navigation}){
 		fetch('https://jahanrashidi.com/sm/api/user_posts.php', requestOptions)
 			.then(response => response.json())
 			.then(data => setPosts(data));
+	}
+
+	async function loadMore(){
+		let requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: "username=" + username + "&password=" + password + "&user=" + user + "&offset=" + posts.length + "&new=1"
+		};
+		
+		if(loadingMore) return;
+		setLoadingMore(true);
+
+		fetch('https://jahanrashidi.com/sm/api/user_posts.php', requestOptions)
+			.then(response => response.json())
+			.then(data => {
+				setPosts([...posts, ...data]);
+				setLoadingMore(false);
+			});
 	}
 	
 	useEffect(() => {	
@@ -50,7 +69,8 @@ export default function UserScreen({route, navigation}){
 			<Profile navigation={navigation} userData={userData} username={username} password={password} />
 
 			<Seperator />
-		</>)} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}/>
+		</>)} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />}
+		footer={<ActivityIndicator size="large" color="#ffffff" animating={loadingMore} />} loadMore={loadMore} />
 	</SafeAreaView>
 	);
 }

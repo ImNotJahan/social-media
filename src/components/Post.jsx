@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Username from "./Username";
 import Text from "./Text";
-import { styles } from "../styles";
+import { styles, colors } from "../styles";
 import Album from "./Album"
 
 const deviceWidth = Dimensions.get('window').width;
@@ -12,6 +12,16 @@ const deviceWidth = Dimensions.get('window').width;
 
 export default function Post({username, password, post, navigation, user, sendPost, deletePost}){
 	if(deletePost === undefined) deletePost = defaultDeletePost;
+
+	function Comments(){
+		if(post.comment_count == 0) return (<></>);
+
+		return (
+		<TouchableOpacity onPress={() => navigation.navigate(user ? "UserComments" : "Comments", {post_id: post.id})}>
+			<Text style={{color: colors.faint, fontSize: 14}}>View {post.comment_count} comment{post.comment_count == 1 ? "" : "s"}</Text>
+		</TouchableOpacity>
+		);
+	}
 
 	return (
 	<View style={styles.post.main}>
@@ -60,6 +70,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 				</View>
 			</View>
 			<Text style={{flex: 1}}>{post.description.desc}</Text>
+			<Comments />
 		</View>
 	</View>
 	);

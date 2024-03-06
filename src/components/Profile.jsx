@@ -1,21 +1,27 @@
-import { TouchableOpacity, View, Image, Button, Alert, SafeAreaView } from "react-native";
+import { TouchableOpacity, View, Alert, SafeAreaView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { openBrowserAsync } from 'expo-web-browser';
+import { Image } from "expo-image";
+import { useState, useEffect } from "react";
 
 import Text from "./Text";
 import { styles, colors } from "../styles";
 
 export default function Profile({navigation, userData, username, password}){
+	const [following, setFollowing] = useState(false);
+
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: "username=" + username + "&password=" + password + "&user=" + userData.username
 	};
 
+	useEffect(() => {setFollowing(userData?.friends?.followers.includes(username))})
+
 	function followButton(){
 		if(userData?.username === username) return (<></>);
 
-		if(userData?.friends?.followers.includes(username)){
+		if(following){
 			return (
 			<TouchableOpacity onPress={unfollow}>
 				<Ionicons name="person-remove" color="white" size={32} />
@@ -31,10 +37,14 @@ export default function Profile({navigation, userData, username, password}){
 	}
 	
 	async function follow(){
+		userData.friends.followers.push(username);
+		setFollowing(true);
 		fetch('https://jahanrashidi.com/sm/api/follow.php', requestOptions);
 	}
 	
 	async function unfollow(){
+		userData.friends.followers.splice(userData.friends.followers.indexOf(username));
+		setFollowing(false);
 		fetch('https://jahanrashidi.com/sm/api/unfollow.php', requestOptions);
 	}
 
@@ -57,24 +67,32 @@ export default function Profile({navigation, userData, username, password}){
 			</TouchableOpacity>
 		)}
 		<View style={styles.profile}>
-			<Image source={{uri: userData.pfp}} style={styles.pfp} />
+			<Image source={userData.pfp} style={styles.pfp} />
 			<View style={{marginVertical: 16, flexDirection: "row"}}>
 				<Text style={{fontSize: 32, marginRight: 4}}>{userData.display_name}</Text>
 				{followButton()}
 			</View>
-			<View style={{marginBottom: 10, flexDirection: "row"}}>
-				<Button style={styles.link} color={colors.link} title={userData?.friends?.followers.length + " followers"} 
-					onPress={() => navigation.navigate("Followers", {user: userData.username, referrerTitle: userData.display_name})} />
-				<Button style={styles.link} color={colors.link} title={userData?.friends?.following.length + " following"} 
-					onPress={() => navigation.navigate("Following", {user: userData.username, referrerTitle: userData.display_name})} />
+			<View style={{marginBottom: 10, flexDirection: "row", gap: 16}}>
+				<TouchableOpacity onPress={() => navigation.push("Followers", {user: userData.username, referrerTitle: userData.display_name})}>
+					<Text style={styles.link}>{userData?.friends?.followers.length + " followers"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => navigation.push("Following", {user: userData.username, referrerTitle: userData.display_name})}>
+					<Text style={styles.link}>{userData?.friends?.following.length + " following"}</Text>
+				</TouchableOpacity>
 			</View>
-			{userData.bio?.link == "" ? (<></>) : (<Button style={styles.link} color={colors.link} title={userData.bio?.link} onPress={() => openBrowserAsync(userData.bio?.link)} />)}
+			{userData.bio?.link == "" ? (<></>) : 
+				(<TouchableOpacity onPress={() => openBrowserAsync(userData.bio?.link)} >
+					<Text style={styles.link}>{userData.bio?.link}</Text>
+				</TouchableOpacity>)
+			}
 			
 			<Text>{userData.bio?.text}</Text>
 			
 			{userData.username == username ? (
 				<View style={{marginVertical: 10, flexDirection: "row"}}>
-					<Button style={styles.link} color={colors.link} title="Edit profile" onPress={() => navigation.navigate("Edit profile", {userData: userData})} />
+					<TouchableOpacity onPress={() => navigation.navigate("Edit profile", {userData: userData})}>
+						<Text style={styles.link}>Edit profile</Text>
+					</TouchableOpacity>
 				</View>) : (<></>)
 			}
 		</View>

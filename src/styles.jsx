@@ -7,6 +7,7 @@ export const colors = {
 	foreground: "#3a3b3a", // 262626
 	input: "#141414",
 	faint: "#777",
+	faint2: "#999"
 };
 
 export const styles = StyleSheet.create({
@@ -69,7 +70,10 @@ export const styles = StyleSheet.create({
 	},
 	chat: {
 		flexDirection: "row",
-		marginBottom: 16
+		marginBottom: 8,
+		backgroundColor: colors.foreground,
+		padding: 8,
+		borderRadius: 4
 	},
 	authInput: {
 		color: "#ddd",
@@ -84,7 +88,7 @@ export const styles = StyleSheet.create({
 	authButton: {
 		borderRadius: 8,
 		height: 50,
-		backgroundColor: "rgb(93, 95, 222)",
+		backgroundColor: "#006635",
 		fontSize: 16,
 		paddingHorizontal: 16,
 		marginHorizontal: 32,
@@ -124,13 +128,17 @@ export const styles = StyleSheet.create({
 	settings: {
 		position: "absolute",
 		right: 0,
-		margin: 20,
+		margin: 10,
 		zIndex: 1 // required so TouchableOpacity can be interacted with when position: "absolute"
 	},
 	headerIcons: {
-		flexDirection: "row-reverse",
+		flexDirection: "row",
 		gap: 10,
-		marginHorizontal: 10
+	},
+	header: {
+		marginHorizontal: 10,
+		flexDirection: "row",
+		justifyContent: "space-between",
 	},
 	time: {
 		color: colors.faint, 

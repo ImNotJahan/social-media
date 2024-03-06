@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItemAsync, setItemAsync, deleteItemAsync } from "expo-secure-store";
 
 export async function save(key, value) {
 	try {
-		await AsyncStorage.setItem(key, value);
+		await setItemAsync(key, value);
 	} catch (e) {
 		console.log(e);
 	}
@@ -10,7 +10,7 @@ export async function save(key, value) {
 
 export async function get(key) {
 	try {
-		const value = await AsyncStorage.getItem(key);
+		const value = await getItemAsync(key);
 		return value;
 	} catch (e) {
 		console.log(e);
@@ -19,5 +19,6 @@ export async function get(key) {
 }
 
 export async function clearAll(){
-	AsyncStorage.getAllKeys().then(keys => AsyncStorage.multiRemove(keys));
+	await deleteItemAsync("username");
+	await deleteItemAsync("password");
 }

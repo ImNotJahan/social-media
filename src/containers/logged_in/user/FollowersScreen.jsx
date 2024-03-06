@@ -30,7 +30,7 @@ export default function FollowersScreen({route, navigation}){
 	
 	return (
 	<ScrollView>
-		<ListUsers users={followers} navigation={navigation} />
+		<ListUsers users={followers} navigation={navigation} push={true} />
 	</ScrollView>
 	);
 }

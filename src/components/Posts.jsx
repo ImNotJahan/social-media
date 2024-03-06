@@ -1,15 +1,20 @@
 import { View, TouchableOpacity, Dimensions, Modal, Image, FlatList } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useScrollToTop } from "@react-navigation/native";
+import { shareAsync } from "expo-sharing";
 
 import Text from "./Text";
 import { styles } from "../styles";
 import Post from "./Post";
 
-export default function Posts({username, password, posts, navigation, user, header, refreshControl}){
+export default function Posts({username, password, posts, navigation, user, header, refreshControl, loadMore, footer}){
 	const [shareOpen, setShareOpen] = useState(false);
 	const [shareId, setShareId] = useState(-1);
 	const [recents, setRecents] = useState([]);
+
+	const ref = useRef(null);
+	useScrollToTop(ref);
 
 	if(posts == undefined || posts.map == undefined) return (<></>);
 
@@ -60,11 +65,18 @@ export default function Posts({username, password, posts, navigation, user, head
 		//posts = posts.filter(obj => obj.id !== id);
 	}
 
+	async function shareSheet(){
+		await shareAsync("https://jahanrashidi.com/sm/comments/?id=" + shareId);
+	}
+
 	return (
 	<View>
-		<FlatList data={posts} keyExtractor={post => post.id} ListHeaderComponent={header} refreshControl={refreshControl} renderItem={({item}) => (
+		<FlatList data={posts} keyExtractor={post => post.id} ref={ref} ListHeaderComponent={header} refreshControl={refreshControl} renderItem={({item}) => (
 			<Post username={username} password={password} post={item} navigation={navigation} user={user} sendPost={sendPost} deletePost={deletePost} />
-		)} />
+		)} onEndReached={({distanceFromEnd}) => {
+			// so loadMore isn't called when initial posts are loading
+			if(distanceFromEnd >= 0 && posts.length > 0) {loadMore();}
+		}} initialNumToRender={5} onEndThreshold={0.5} ListFooterComponent={footer} style={{height: "100%"}} />
 		<Modal visible={shareOpen} animationType="slide" transparent={true}>
 			<View style={styles.modal}>
 				<View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", margin: 5}}>
@@ -85,6 +97,9 @@ export default function Posts({username, password, posts, navigation, user, head
 						<Text>View more</Text>
 					</View>
 				</View>
+				<TouchableOpacity onPress={shareSheet} style={{alignItems: "center", margin: 5}}>
+					<Ionicons name="share" color="white" size={60} />
+				</TouchableOpacity>
 			</View>
 		</Modal>
 	</View>);

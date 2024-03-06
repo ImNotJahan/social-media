@@ -3,10 +3,11 @@
     "name": "Agur",
     "slug": "social-media",
     "privacy": "unlisted",
-    "version": "1.0.4",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "scheme": "agur",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,11 +19,16 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.imnotjahan.socialmedia",
+      "userInterfaceStyle": "dark",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#282828"
+        "backgroundColor": "#2a2b2a"
       },
       "package": "com.imnotjahan.socialmedia"
     },
@@ -30,6 +36,9 @@
       "eas": {
         "projectId": "2bb968e4-c704-40c2-8248-68a3862b431a"
       }
+    },
+    "notification": {
+      "iosDisplayInForeground": true
     },
     "owner": "imnotjahan",
     "runtimeVersion": "1.0.0",

@@ -20,7 +20,7 @@ export default function EditingScreen({route, navigation}){
 		const { status } = await requestMediaLibraryPermissionsAsync(); 
 
 		if (status === "granted") {
-			const result = await launchImageLibraryAsync(); 
+			const result = await launchImageLibraryAsync({aspect: [1, 1], allowsEditing: true}); 
 
 			if (!result.cancelled) { 
 				const pfp = result.assets[0];

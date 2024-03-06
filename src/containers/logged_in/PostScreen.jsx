@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import AuthButton from "../../components/AuthButton";
 import { styles, colors } from "../../styles";
 import Text from "../../components/Text";
+import Album from "../../components/Album";
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -57,38 +58,39 @@ export default function PostScreen({route, navigation}){
 		const { status } = await requestMediaLibraryPermissionsAsync(); 
 
 		if (status === "granted") {
-			const result = await launchImageLibraryAsync({allowsMultipleSelection: true}); 
+			const result = await launchImageLibraryAsync({allowsMultipleSelection: true, orderedSelection: true, aspect: [1, 1]}); 
 
 			if (!result.cancelled) {
+				if(result.assets == null) return;
 				for(let i = 0; i < result.assets.length; i++){
 					result.assets[i].uri = result.assets[i].uri.replace("file://", "");
 				}
 				
 				setImage(result.assets); 
 			} 
-		} 
+		} else{
+			Alert.alert("Camera roll access denied.");
+		}
 	}
 	
 	function DisplayImages({images}){
 		if(images[0] == undefined) return (<></>);
 		
-		return images.map(img => 
-			(<Image key={img.uri} source={{uri: img.uri}} width={deviceWidth - 64} height={deviceWidth / img.width * img.height} 
-					style={{marginHorizontal: 32, marginVertical: 10, borderRadius: 5}} />));
+		return <View style={styles.post.main}><Album deviceWidth={deviceWidth} images={images} /></View>
 	}
 	
 	if(uploading) return (
 	<View style={{flex: 1, justifyContent: "space-around"}}>
-		<ActivityIndicator size="large" color={colors.link} />
+		<ActivityIndicator size="large" color="#ffffff" />
 	</View>
 	);
 	else return (
 	<ScrollView>
-		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<DisplayImages images={image} />
+		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<AuthButton onPress={pickImage}>Select images</AuthButton>
 		<View style={{flexDirection: "row", marginHorizontal: 30, marginBottom: 20, alignItems: "center", gap: 10}}>
-			<Switch value={privatePost} onValueChange={setPrivatePost} />
+			<Switch value={privatePost} onValueChange={setPrivatePost}/>
 			<Text>Private post</Text>
 		</View>
 		<AuthButton onPress={post}>Post</AuthButton>

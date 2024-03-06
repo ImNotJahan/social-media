@@ -19,6 +19,7 @@ export default function ChatScreen({route, navigation}){
 	const [optionsOpen, setOptionsOpen] = useState(false);
 	const [messageFocus, setMessageFocus] = useState(-1);
 	let lastId = -1;
+	let canSend = false;
 
 	async function refresh(){
 		const data = new FormData();
@@ -39,6 +40,8 @@ export default function ChatScreen({route, navigation}){
 					setMessages(messages => [...messages, ...data]);
 					lastId = data[data.length - 1].id;
 				}
+
+				canSend = true;
 			});
 	}
 	
@@ -78,18 +81,25 @@ export default function ChatScreen({route, navigation}){
 		setMessages(messages.filter(obj => {return obj.id !== messageFocus}));
 	}
 
+	let lastSender = "";
+
 	useEffect(() => {	
 		navigation.setOptions({ title: route.params?.receiver });
 		
 		refresh();
-		
+
 		const interval = setInterval(() => {
-			refresh();
+			if(canSend) {
+				canSend = false;
+				refresh();
+			}
 		}, 1000);
 		return () => clearInterval(interval);
 	}, [chat_id]);
-	
-	lastSender = "";
+
+	useEffect(() => {
+		lastSender = "";
+	});
 	
 	function addUsername(sender, time){
 		if(sender != lastSender){
@@ -112,7 +122,7 @@ export default function ChatScreen({route, navigation}){
 	return (
 	<SafeAreaView>
 		<KeyboardShift>
-			<FlatList ref={ref => {this.flatList = ref}} onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})} style={{paddingHorizontal: 10}}
+			<FlatList ref={ref => {this.flatList = ref}} onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})} style={{paddingHorizontal: 10, height: "100%"}}
 			data={messages} keyExtractor={message => message.id} renderItem={({item}) => (
 				<View key={item.id}>
 					{addUsername(item.sender, item.sent)}

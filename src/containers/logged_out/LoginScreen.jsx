@@ -1,7 +1,6 @@
 import { View, TextInput } from "react-native";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { requestPermissionsAsync, getExpoPushTokenAsync } from "expo-notifications";
 
 import AuthButton from "../../components/AuthButton";
 import Text from "../../components/Text";
@@ -30,16 +29,6 @@ export default function LoginScreen({route, navigation}) {
 				if(data.response === "Correct info"){
 					save("username", username.toLowerCase());
 					save("password", password);
-
-					requestPermissionsAsync().then(status => {
-						if(status.granted){
-							getExpoPushTokenAsync({projectId: "2bb968e4-c704-40c2-8248-68a3862b431a"}).then(token => {
-								requestOptions.body += "&token=" + token.data;
-								
-								fetch("https://jahanrashidi.com/sm/api/set_notification_token.php", requestOptions);
-							});
-						}
-					});
 
 					dispatch(setUsername(username.toLowerCase()));
 					dispatch(setPassword(password));
