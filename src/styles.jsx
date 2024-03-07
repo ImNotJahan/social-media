@@ -75,6 +75,9 @@ export const styles = StyleSheet.create({
 		padding: 8,
 		borderRadius: 4
 	},
+	comment: {
+		margin: 10,
+	},
 	authInput: {
 		color: "#ddd",
 		borderRadius: 8,

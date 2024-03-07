@@ -1,3 +1,5 @@
+import { View } from "react-native";
+
 import Username from "./components/Username";
 import Text from "./components/Text";
 import Link from "./components/Link";
@@ -18,16 +20,23 @@ export default function parse(text, navigation){
 		}
 	});
 
-	return tokens.map(token => {
-		switch(token.type){
-		case "text":
-			return (<Text>{token.content}</Text>);
+	let id = 0;
+	return (
+	<View style={{flexDirection: "row"}}>
+		{tokens.map(token => {
+			id++;
 
-		case "link":
-			return (<Link href={token.content} navigation={navigation} />);
+			switch(token.type){
+			case "text":
+				return (<Text key={id}>{token.content}</Text>);
 
-		case "username":
-			return (<Username navigation={navigation} at={true}>{token.content}</Username>)
-		}
-	});
+			case "link":
+				return (<Link href={token.content} navigation={navigation} key={id}/>);
+
+			case "username":
+				return (<Username navigation={navigation} at={true} key={id}>{token.content}</Username>)
+			}
+		})}
+	</View>
+	);
 }

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 
 import Text from "./Text";
 import { styles, colors } from "../styles";
+import parse from "../parse";
 
 export default function Profile({navigation, userData, username, password}){
 	const [following, setFollowing] = useState(false);
@@ -91,7 +92,7 @@ export default function Profile({navigation, userData, username, password}){
 				</TouchableOpacity>)
 			}
 			
-			<Text>{userData.bio?.text}</Text>
+			<View>{parse(userData.bio?.text)}</View>
 			
 			{userData.username == username ? (
 				<View style={{marginVertical: 10, flexDirection: "row"}}>
