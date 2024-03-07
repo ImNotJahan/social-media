@@ -33,6 +33,7 @@ import ProfileScreen from "./logged_in/user/ProfileScreen";
 import FollowersScreen from "./logged_in/user/FollowersScreen";
 import FollowingScreen from "./logged_in/user/FollowingScreen";
 import EditingScreen from "./logged_in/user/EditingScreen";
+import SavedScreen from "./logged_in/user/SavedScreen";
 
 import HomeScreen from "./logged_in/home/HomeScreen";
 import CommentsScreen from "./logged_in/home/CommentsScreen";
@@ -171,6 +172,7 @@ export function UserStackScreen(){
 		<UserStack.Screen name="Following" component={FollowingScreen} />
 		<UserStack.Screen name="Edit profile" component={EditingScreen} />
 		<UserStack.Screen name="Settings" component={SettingsScreen} />
+		<UserStack.Screen name="Saved" component={SavedScreen} />
 	</UserStack.Navigator>
 	);
 }

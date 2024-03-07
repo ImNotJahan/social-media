@@ -58,9 +58,14 @@ export default function Profile({navigation, userData, username, password}){
 	return (
 	<View>
 		{username == userData.username ? (
+			<>
 			<TouchableOpacity style={styles.settings} onPress={() => navigation.navigate("Settings")}>
 				<Ionicons name="settings" size={32} color="white" />
 			</TouchableOpacity>
+			<TouchableOpacity style={styles.savedPostsButton} onPress={() => navigation.navigate("Saved")}>
+				<Ionicons name="bookmark" size={32} color="white" />
+			</TouchableOpacity>
+			</>
 		) : (
 			<TouchableOpacity style={styles.settings} onPress={gotoChat}>
 				<Ionicons name="chatbubble" size={32} color="white" />

@@ -13,6 +13,59 @@ const deviceWidth = Dimensions.get('window').width;
 export default function Post({username, password, post, navigation, user, sendPost, deletePost}){
 	if(deletePost === undefined) deletePost = defaultDeletePost;
 
+	const [saved, setSaved] = useState(post.saved);
+	let saveProcessing = false;
+
+	const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: "username=" + username + "&password=" + password + "&id=" + post.id
+	};
+
+	async function savePost(){
+		if(!saveProcessing){
+			saveProcessing = true;
+
+			try{
+				if(!saved){	
+					fetch('https://jahanrashidi.com/sm/api/save_post.php', requestOptions)
+						.then(response => response.json())
+						.then(data => {
+							switch(data.response){
+							case "Success":
+								setSaved(true);
+								break;
+
+							default:
+								Alert.alert("", data.response);
+								break;
+							}
+
+							saveProcessing = false;
+						});
+				} else {
+					fetch('https://jahanrashidi.com/sm/api/unsave_post.php', requestOptions)
+						.then(response => response.json())
+						.then(data => {
+							switch(data.response){
+							case "Success":
+								setSaved(false);
+								break;
+
+							default:
+								Alert.alert("", data.response);
+								break;
+							}
+
+							saveProcessing = false;
+						});
+				}
+			} catch(e){
+				saveProcessing = false;
+			}
+		}
+	}
+
 	function Comments(){
 		if(post.comment_count == 0) return (<></>);
 
@@ -58,7 +111,10 @@ export default function Post({username, password, post, navigation, user, sendPo
 					</TouchableOpacity>
 					)}
 				</View>
-				<View>
+				<View style={{flexDirection: "row", marginBottom: 10, gap: 15}}>
+					<TouchableOpacity onPress={savePost}>
+						<Ionicons name={saved ? "bookmark" : "bookmark-outline"} color="white" size={30} />
+					</TouchableOpacity>
 					{post.can_delete ? (
 					<TouchableOpacity onPress={() => Alert.alert("", "Are you sure you want to delete this post?",
 						[{text: "Delete", onPress: () => { deletePost(username, password, post.id); }}, {text: "Cancel"}],

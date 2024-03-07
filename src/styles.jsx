@@ -131,6 +131,12 @@ export const styles = StyleSheet.create({
 		margin: 10,
 		zIndex: 1 // required so TouchableOpacity can be interacted with when position: "absolute"
 	},
+	savedPostsButton: {
+		position: "absolute",
+		right: 40,
+		margin: 10,
+		zIndex: 1 // required so TouchableOpacity can be interacted with when position: "absolute"
+	},
 	headerIcons: {
 		flexDirection: "row",
 		gap: 10,
