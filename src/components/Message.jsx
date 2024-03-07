@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 
 import Text from "./Text";
 import PreviewPost from "./PreviewPost";
+import parse from "../parse";
 
 export default function Message({obj, messageOptions, sender, id, navigation}){
 	const username = useSelector((state) => state.auth.username);
@@ -13,7 +14,7 @@ export default function Message({obj, messageOptions, sender, id, navigation}){
 
 	let content;
 
-	if(obj.hasOwnProperty("text")) content = (<Text>{obj.text}</Text>);
+	if(obj.hasOwnProperty("text")) content = parse(obj.text, navigation);
 	else if(obj.hasOwnProperty("post")){
 		useEffect(() => {
 			const data = new FormData();

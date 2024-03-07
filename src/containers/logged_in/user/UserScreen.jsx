@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { ScrollView, View, RefreshControl, SafeAreaView, ActivityIndicator } from "react-native";
+import { ScrollView, View, RefreshControl, SafeAreaView, ActivityIndicator, Alert } from "react-native";
 import { useSelector } from "react-redux";
 
 import Seperator from "../../../components/Seperator";
 import Profile from "../../../components/Profile";
 import Posts from "../../../components/Posts";
+import Text from "../../../components/Text";
 import { styles } from "../../../styles";
 
 export default function UserScreen({route, navigation}){
@@ -13,6 +14,7 @@ export default function UserScreen({route, navigation}){
 	const [posts, setPosts] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const [loadingMore, setLoadingMore] = useState(false);
+	const [userExists, setUserExists] = useState(true);
 
 	username = useSelector(state => state.auth.username);
 	password = useSelector(state => state.auth.password);
@@ -31,11 +33,27 @@ export default function UserScreen({route, navigation}){
 	async function refresh(){
 		fetch('https://jahanrashidi.com/sm/api/user.php', requestOptions)
 			.then(response => response.json())
-			.then(data => setUserData(data));
+			.then(data => {
+				if(data.hasOwnProperty("username")){
+					setUserData(data);
+				} else if(data.response == "No user exists"){
+					setUserExists(false);
+				} else{
+					Alert.alert("", data.response);
+				}
+			});
 		
 		fetch('https://jahanrashidi.com/sm/api/user_posts.php', requestOptions)
 			.then(response => response.json())
-			.then(data => setPosts(data));
+			.then(data => {
+				if(data.hasOwnProperty("response")){
+					console.log(data.response);
+					setUserExists(false);
+				} else {
+					setPosts(data);
+					setUserExists(true);
+				}
+			});
 	}
 
 	async function loadMore(){
@@ -56,13 +74,21 @@ export default function UserScreen({route, navigation}){
 			});
 	}
 	
-	useEffect(() => {	
+	useEffect(() => {
 		setUser(route.params.user);
  		navigation.setOptions({title: route.params.user});
 		
 		refresh();
 	}, [route.params.user, user]);
 	
+	if(!userExists){
+		return (
+		<SafeAreaView style={{justifyContent: "center", height: "100%"}}>
+			<Text style={{textAlign: "center"}}>User doesn't exist</Text>
+		</SafeAreaView>
+		);
+	}
+
 	return (
 	<SafeAreaView>
 		<Posts posts={posts} navigation={navigation} username={username} password={password} header={(<>

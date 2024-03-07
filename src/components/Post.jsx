@@ -6,6 +6,7 @@ import Username from "./Username";
 import Text from "./Text";
 import { styles, colors } from "../styles";
 import Album from "./Album"
+import parse from "../parse";
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -125,7 +126,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 					) : <></>}
 				</View>
 			</View>
-			<Text style={{flex: 1}}>{post.description.desc}</Text>
+			{parse(post.description.desc)}
 			<Comments />
 		</View>
 	</View>

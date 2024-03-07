@@ -16,7 +16,7 @@ export default function SavedScreen({route, navigation}){
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: "username=" + username + "&password=" + password + "&new=1"
+			body: "username=" + username + "&password=" + password
 		};
 		
 		fetch('https://jahanrashidi.com/sm/api/saved_posts.php', requestOptions)
@@ -28,7 +28,7 @@ export default function SavedScreen({route, navigation}){
 		let requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: "username=" + username + "&password=" + password + "&offset=" + posts.length + "&new=1"
+			body: "username=" + username + "&password=" + password + "&offset=" + posts.length
 		};
 		
 		if(loadingMore) return;
