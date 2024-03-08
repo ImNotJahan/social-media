@@ -52,7 +52,7 @@ export default function SavedScreen({route, navigation}){
 	});
 	
 	return (
-	<Posts posts={posts} navigation={navigation} username={username} password={password} loadMore={loadMore}
+	<Posts posts={posts} navigation={navigation} username={username} password={password} loadMore={loadMore} user={true}
 	refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#bbb" />} 
 	footer={<ActivityIndicator size="large" color="#ffffff" animating={loadingMore} />} />
 	);

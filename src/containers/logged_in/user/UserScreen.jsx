@@ -91,7 +91,7 @@ export default function UserScreen({route, navigation}){
 
 	return (
 	<SafeAreaView>
-		<Posts posts={posts} navigation={navigation} username={username} password={password} header={(<>
+		<Posts posts={posts} navigation={navigation} username={username} password={password} user={true} header={(<>
 			<Profile navigation={navigation} userData={userData} username={username} password={password} />
 
 			<Seperator />
