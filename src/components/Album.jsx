@@ -3,8 +3,9 @@ import { useState } from "react";
 
 import RemoteImage from "./RemoteImage";
 
-export default function Album({images, deviceWidth}){
-	const [albumIndex, setAlbumIndex] = useState(0);
+export default function Album({images, deviceWidth, albumIndex, setAlbumIndex}){
+	if(albumIndex == undefined)
+		[albumIndex, setAlbumIndex] = useState(0);
 
 	if(images.length > 1){
 		return (
