@@ -98,7 +98,7 @@ export default function CommentsScreen({route, navigation}){
 		<FlatList data={comments} extractKey={comment => i++} renderItem={({item}) => (
 			<TouchableOpacity style={styles.comment} key={i} onLongPress={() => commentOptions(i)}>
 				<Username navigation={navigation}>{item.poster}</Username>
-				{parse(item.text)}
+				{parse(item.text, navigation)}
 			</TouchableOpacity>
 		)} ListFooterComponent={(
 			<View style={{flexDirection: 'row', margin: 5, backgroundColor: "#141414", borderRadius: 10}}>

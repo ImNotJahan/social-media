@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator } from "react-native";
 import { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 import AuthButton from "../../components/AuthButton";
 import { styles, colors } from "../../styles";
@@ -76,7 +77,35 @@ export default function PostScreen({route, navigation}){
 	function DisplayImages({images}){
 		if(images[0] == undefined) return (<></>);
 		
-		return <View style={styles.post.main}><Album deviceWidth={deviceWidth} images={images} /></View>
+		return (
+			<View style={styles.post.main}>
+				<View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 2}}>
+					<View style={{flexDirection: "row"}}>
+						<Text style={styles.link}>{username}</Text>
+						{privatePost ? <Text style={styles.time}>private</Text> : <></>}
+					</View>
+					<Text style={styles.time}>1234-56-67 08:09:10</Text>
+				</View>
+
+				<Album deviceWidth={deviceWidth} images={images} />
+				
+				<View style={styles.post.bottom}>
+					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
+						<View style={{flexDirection: "row", marginBottom: 10, gap: 15}}>
+							<Ionicons name="chatbox-ellipses" color="white" size={30} />
+							<Ionicons name="send" color="white" size={30} />
+							<Ionicons name="repeat" color="white" size={30} />
+						</View>
+						<View style={{flexDirection: "row", marginBottom: 10, gap: 15}}>
+							<Ionicons name="bookmark-outline" color="white" size={30} />
+
+							<Ionicons name="trash" color="white" size={30} />
+						</View>
+					</View>
+					<Text>{description}</Text>
+				</View>
+			</View>
+		);
 	}
 	
 	if(uploading) return (
@@ -87,8 +116,8 @@ export default function PostScreen({route, navigation}){
 	else return (
 	<ScrollView>
 		<DisplayImages images={image} />
-		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<AuthButton onPress={pickImage}>Select images</AuthButton>
+		<TextInput placeholder="Description" value={description} multiline={true} style={[styles.authInput, {height: 100}]} onChangeText={setDescription} keyboardAppearance="dark" />
 		<View style={{flexDirection: "row", marginHorizontal: 30, marginBottom: 20, alignItems: "center", gap: 10}}>
 			<Switch value={privatePost} onValueChange={setPrivatePost}/>
 			<Text>Private post</Text>

@@ -126,7 +126,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 					) : <></>}
 				</View>
 			</View>
-			{parse(post.description.desc)}
+			{parse(post.description.desc, navigation)}
 			<Comments />
 		</View>
 	</View>
