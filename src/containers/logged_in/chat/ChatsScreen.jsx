@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, SafeAreaView } from "react-native";
+import { FlatList, TouchableOpacity, View, SafeAreaView, TextInput } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -9,6 +10,7 @@ import { styles, colors } from "../../../styles";
 
 export default function ChatsScreen({route, navigation}){
 	const [chats, setChats] = useState([]);
+	const [query, setQuery] = useState("");
 	const dispatch = useDispatch();
 	
 	username = useSelector(state => state.auth.username);
@@ -47,6 +49,13 @@ export default function ChatsScreen({route, navigation}){
 		dispatch(setMessages(unread));
 	}, [chats]);
 
+	function results(){
+		if(query == "") return;
+
+		navigation.navigate("ChatResults", {query: query});
+		setQuery("");
+	}
+
 	return (
 	<SafeAreaView style={{margin: 10}}>
 		<FlatList data={chats} style={{height: "100%"}} renderItem={({item}) => (
@@ -57,7 +66,18 @@ export default function ChatsScreen({route, navigation}){
 					<Text style={{color: item.unseen[username] == 0 ? colors.faint2 : colors.text}}>{item.last_message}</Text>
 				</View>
 			</TouchableOpacity>
-		)} keyExtractor={chat => chat.receiver.username} />
+		)} keyExtractor={chat => chat.receiver.username} ListHeaderComponent={(
+			<View style={{borderRadius: 8,
+		height: 50,
+		backgroundColor: colors.input,
+		marginBottom: 10,
+		flexDirection: "row"}}>
+				<TextInput style={styles.searchInput} onChangeText={setQuery} value={query} keyboardAppearance="dark" onSubmitEditing={results} autoCorrect={false} />
+				<TouchableOpacity style={styles.searchButton} onPress={results}>
+					<Ionicons color="white" size={32} name="search" />
+				</TouchableOpacity>
+			</View>
+		)} />
 	</SafeAreaView>
 	);
 }

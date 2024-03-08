@@ -27,6 +27,7 @@ import SettingsScreen from "./logged_in/SettingsScreen";
 import ChatsScreen from "./logged_in/chat/ChatsScreen";
 import ChatScreen from "./logged_in/chat/ChatScreen";
 import PostViewScreen from "./logged_in/chat/PostViewScreen";
+import ChatResultsScreen from "./logged_in/chat/ChatResultsScreen";
 
 import UserScreen from "./logged_in/user/UserScreen";
 import ProfileScreen from "./logged_in/user/ProfileScreen";
@@ -183,6 +184,7 @@ export function ChatStackScreen(){
 		<ChatStack.Screen name="Chats" options={{headerShown: false}} component={ChatsScreen} />
 		<ChatStack.Screen name="Chat" component={ChatScreen} />
 		<ChatStack.Screen name="PostView" options={{title: "View Post"}} component={PostViewScreen} />
+		<ChatStack.Screen name="ChatResults" options={{title: "Results"}} component={ChatResultsScreen} />
 	</ChatStack.Navigator>
 	);
 }
