@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator } from "react-native";
+import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
+import PhotoEditor from "@baronha/react-native-photo-editor";
 
 import AuthButton from "../../components/AuthButton";
 import { styles, colors } from "../../styles";
@@ -16,6 +17,7 @@ export default function PostScreen({route, navigation}){
 	const [description, setDescription] = useState("");
 	const [privatePost, setPrivatePost] = useState(false);
 	const [uploading, setUploading] = useState(false);
+	const [albumIndex, setAlbumIndex] = useState(0);
 
 	username = useSelector(state => state.auth.username);
 	password = useSelector(state => state.auth.password);
@@ -74,6 +76,19 @@ export default function PostScreen({route, navigation}){
 		}
 	}
 	
+	async function editPhoto(){
+		result = await PhotoEditor.open({path: "file://" + image[albumIndex].uri, stickers: []});
+
+		let newImages = image.slice();
+		
+		let clonedImage = JSON.parse(JSON.stringify(newImages[albumIndex]));
+		clonedImage.uri = result.replace("file://", "");
+
+		newImages[albumIndex] = clonedImage;
+
+		setImage(newImages)
+	}
+
 	function DisplayImages({images}){
 		if(images[0] == undefined) return (<></>);
 		
@@ -87,7 +102,11 @@ export default function PostScreen({route, navigation}){
 					<Text style={styles.time}>1234-56-67 08:09:10</Text>
 				</View>
 
-				<Album deviceWidth={deviceWidth} images={images} />
+				<TouchableOpacity onPress={editPhoto} style={{position: "absolute", right: 15, top: 35, zIndex: 1, backgroundColor: colors.foreground, padding: 6, borderRadius: 20}}>
+					<Ionicons name="pencil" color="white" size={30} />
+				</TouchableOpacity>
+
+				<Album deviceWidth={deviceWidth} images={images} albumIndex={albumIndex} setAlbumIndex={setAlbumIndex} />
 				
 				<View style={styles.post.bottom}>
 					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
@@ -98,7 +117,6 @@ export default function PostScreen({route, navigation}){
 						</View>
 						<View style={{flexDirection: "row", marginBottom: 10, gap: 15}}>
 							<Ionicons name="bookmark-outline" color="white" size={30} />
-
 							<Ionicons name="trash" color="white" size={30} />
 						</View>
 					</View>
