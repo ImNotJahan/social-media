@@ -18,6 +18,9 @@ export default function parse(text, navigation){
 			else
 				tokens.push({type: "text", content: word + " "});
 		}
+
+		if(tokens[tokens.length - 1].type != "text")
+			tokens.push({type: "text", content: " "});
 	});
 
 	let id = 0;

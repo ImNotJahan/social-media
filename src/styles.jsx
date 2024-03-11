@@ -7,7 +7,8 @@ export const colors = {
 	foreground: "#3a3b3a", // 262626
 	input: "#141414",
 	faint: "#777",
-	faint2: "#999"
+	faint2: "#999",
+	reposted: "#0A7C87"
 };
 
 export const styles = StyleSheet.create({
@@ -153,7 +154,8 @@ export const styles = StyleSheet.create({
 		color: colors.faint, 
 		paddingLeft: 5, 
 		fontSize: 12, 
-		paddingTop: 3
+		paddingTop: 3,
+		//flex: 1
 	},
 	modal: {
 		backgroundColor: colors.background,

@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { useState } from "react";
 
-export default function RemoteImage({uri, desiredWidth, style}) {
+export default function RemoteImage({uri, desiredWidth, style, temp}) {
     return (
         <Image
             source={uri.uri}
@@ -10,6 +10,7 @@ export default function RemoteImage({uri, desiredWidth, style}) {
                 height: desiredWidth,// / uri.width * uri.height, damn carousel
                 backgroundColor: uri.color
             }, style]}
+            cachePolicy={temp ? "none" : "disk"}
         />
     )
 }

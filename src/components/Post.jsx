@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Alert, Dimensions } from "react-native";
+import { View, TouchableOpacity, Alert, Dimensions, Pressable } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
 
@@ -15,6 +15,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 	if(deletePost === undefined) deletePost = defaultDeletePost;
 
 	const [saved, setSaved] = useState(post.saved);
+	const [readMore, setReadMore] = useState(false);
 	let saveProcessing = false;
 
 	const requestOptions = {
@@ -80,11 +81,13 @@ export default function Post({username, password, post, navigation, user, sendPo
 	return (
 	<View style={styles.post.main}>
 		<View style={{flexDirection: "row", justifyContent: "space-between", marginBottom: 2}}>
-			<View style={{flexDirection: "row"}}>
+			<View style={{flexDirection: "row", flex: 1}}>
 				{post.repost_id != null ? (
 				<>
-					<Username navigation={navigation}>{post.og_poster}</Username>
-					<Text style={styles.time}>reposted by {post.poster}</Text>
+					<Username style={{color: colors.reposted}} navigation={navigation}>{post.og_poster}</Username>
+					<TouchableOpacity style={{flexShrink: 1}} onPress={() => navigation.navigate("UserStack", {screen: "User", initial: false, params: {user: post.poster}})}>
+						<Text style={styles.time} numberOfLines={1}>reposted by {post.poster}</Text>
+					</TouchableOpacity>
 				</>) : (
 				<>
 					<Username navigation={navigation}>{post.poster}</Username>
@@ -92,7 +95,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 				</>
 				)}
 			</View>
-			<Text style={styles.time}>{post.posted == "0000-00-00 00:00:00" ? "" : post.posted}</Text>
+			<Text style={styles.time}>{post.posted == "0000-00-00 00:00:00" ? "" : post.posted.split(" ")[0]}</Text>
 		</View>
 
 		<Album deviceWidth={deviceWidth} images={post.images} />
@@ -126,7 +129,17 @@ export default function Post({username, password, post, navigation, user, sendPo
 					) : <></>}
 				</View>
 			</View>
-			{parse(post.description.desc, navigation)}
+
+			
+				
+			{post.description.desc == "" ? (<></>) : (
+				<Pressable onPress={() => setReadMore(!readMore)}>
+					<Text numberOfLines={readMore ? undefined : 3}>
+						{parse(post.description.desc, navigation)}
+					</Text>
+				</Pressable>
+			)}
+
 			<Comments />
 		</View>
 	</View>

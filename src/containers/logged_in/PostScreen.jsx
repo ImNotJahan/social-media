@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { ScrollView, TextInput, Dimensions, View, Switch, Image, ActivityIndicator, TouchableOpacity, Alert } from "react-native";
 import { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -106,7 +106,7 @@ export default function PostScreen({route, navigation}){
 					<Ionicons name="pencil" color="white" size={30} />
 				</TouchableOpacity>
 
-				<Album deviceWidth={deviceWidth} images={images} albumIndex={albumIndex} setAlbumIndex={setAlbumIndex} />
+				<Album deviceWidth={deviceWidth} images={images} albumIndex={albumIndex} setAlbumIndex={setAlbumIndex} temp={true} />
 				
 				<View style={styles.post.bottom}>
 					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
@@ -139,6 +139,9 @@ export default function PostScreen({route, navigation}){
 		<View style={{flexDirection: "row", marginHorizontal: 30, marginBottom: 20, alignItems: "center", gap: 10}}>
 			<Switch value={privatePost} onValueChange={setPrivatePost}/>
 			<Text>Private post</Text>
+			<TouchableOpacity onPress={() => Alert.alert("Private Posts", "Private posts can only be seen by those who you follow.")}>
+				<Ionicons name="information-circle" size={16} color="white" />
+			</TouchableOpacity>
 		</View>
 		<AuthButton onPress={post}>Post</AuthButton>
 	</ScrollView>);
