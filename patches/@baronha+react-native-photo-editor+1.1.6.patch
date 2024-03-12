@@ -1,0 +1,30 @@
+diff --git a/node_modules/@baronha/react-native-photo-editor/.DS_Store b/node_modules/@baronha/react-native-photo-editor/.DS_Store
+new file mode 100644
+index 0000000..75e7b11
+Binary files /dev/null and b/node_modules/@baronha/react-native-photo-editor/.DS_Store differ
+diff --git a/node_modules/@baronha/react-native-photo-editor/ios/PhotoEditor.m b/node_modules/@baronha/react-native-photo-editor/ios/PhotoEditor.m
+index 67f8b59..9bc4c49 100644
+--- a/node_modules/@baronha/react-native-photo-editor/ios/PhotoEditor.m
++++ b/node_modules/@baronha/react-native-photo-editor/ios/PhotoEditor.m
+@@ -6,4 +6,6 @@ RCT_EXTERN_METHOD(open:(NSDictionary *)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+ 
+++ (BOOL)requiresMainQueueSetup   {   return NO;   }  
++
+ @end
+diff --git a/node_modules/@baronha/react-native-photo-editor/react-native-photo-editor.podspec b/node_modules/@baronha/react-native-photo-editor/react-native-photo-editor.podspec
+index 61bc5bc..f7aa4e9 100644
+--- a/node_modules/@baronha/react-native-photo-editor/react-native-photo-editor.podspec
++++ b/node_modules/@baronha/react-native-photo-editor/react-native-photo-editor.podspec
+@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
+   s.source_files = "ios/**/*.{h,m,mm,swift}"
+   
+   s.dependency "React-Core"
+-  s.dependency "SDWebImage", "~> 5.11.1"
+-  s.dependency 'SDWebImageWebPCoder', '~> 0.8.4'
++  s.dependency "SDWebImage", "~> 5.17.0"
++  s.dependency 'SDWebImageWebPCoder', '~> 0.13.0'
+ 
+   s.subspec 'ZLImageEditor' do |zl|
+     zl.name             = "ZLImageEditor"
