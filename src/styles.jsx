@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
 	},
 	link: {
 		color: colors.link,
-		fontWeight: 600,
+		fontWeight: 700,
 		fontFamily: "Montserrat_700Bold"
 	},
 	tabBar: {
@@ -163,5 +163,10 @@ export const styles = StyleSheet.create({
 		bottom: 0,
 		height: "30%",
 		width: "100%"
+	},
+	setting: {
+		backgroundColor: colors.foreground,
+		padding: 8,
+		marginVertical: 2
 	}
 });

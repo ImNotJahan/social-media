@@ -1,6 +1,7 @@
 import { View, TouchableOpacity, Alert, Dimensions, Pressable } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
+import ImageView from "react-native-image-viewing";
 
 import Username from "./Username";
 import Text from "./Text";
@@ -16,6 +17,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 
 	const [saved, setSaved] = useState(post.saved);
 	const [readMore, setReadMore] = useState(false);
+	const [focused, setFocused] = useState(false);
 	let saveProcessing = false;
 
 	const requestOptions = {
@@ -98,7 +100,7 @@ export default function Post({username, password, post, navigation, user, sendPo
 			<Text style={styles.time}>{post.posted == "0000-00-00 00:00:00" ? "" : post.posted.split(" ")[0]}</Text>
 		</View>
 
-		<Album deviceWidth={deviceWidth} images={post.images} />
+		<Album deviceWidth={deviceWidth} images={post.images} onPress={() => setFocused(true)}/>
 
 		<View style={styles.post.bottom}>
 			<View style={{flexDirection: "row", justifyContent: "space-between"}}>
@@ -142,6 +144,8 @@ export default function Post({username, password, post, navigation, user, sendPo
 
 			<Comments />
 		</View>
+
+		<ImageView images={post.images} imageIndex={0} visible={focused} onRequestClose={() => setFocused(false)} />
 	</View>
 	);
 }
